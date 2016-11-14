@@ -15,7 +15,8 @@ public class Main {
 			
 //			Lexer lexer = new Lexer("./files/prog.txt");
 //			Lexer lexer = new Lexer("./files/prog2.txt");
-			Lexer lexer = new Lexer("./files/test_for.txt");
+//			Lexer lexer = new Lexer("./files/test_for.txt");
+			Lexer lexer = new Lexer("./files/test_while.txt");
 			/*
 			while (lexer.prochain().getClasse() != Classe.TOK_EOF) {
 				System.out.println(lexer.prochain());

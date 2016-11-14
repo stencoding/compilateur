@@ -1,6 +1,5 @@
 package compilateur;
 
-import java.beans.Expression;
 import java.util.ArrayList;
 
 /**
@@ -116,8 +115,8 @@ public class Parser {
 		if (lexer.look().getClasse() == Classe.TOK_IDENT) {
 
 			ArrayList<Arbre> enfants = new ArrayList<Arbre>();
-			Arbre en1 = new Arbre(lexer.next(), null); // lexer positionné sur
-														// IDENT
+			// lexer positionné sur IDENT
+			Arbre en1 = new Arbre(lexer.next(), null);
 
 			if (lexer.look().getClasse() != Classe.TOK_EGAL) {
 				throw new Exception("IDENT non suivie d'un EGAL");
@@ -130,8 +129,8 @@ public class Parser {
 				throw new Exception("EGAL non suivi d'une expression");
 			}
 
-			// on se positionne sur le point-virgule qui n'est pas à ajouter à
-			// l'arbre
+			// on se positionne sur le point-virgule
+			// qui n'est pas à ajouter à l'arbre
 			// fin de l'instruction
 			if (lexer.next().getClasse() != Classe.TOK_POINT_VIRGULE) {
 				throw new Exception("Expression non suivie d'un POINT_VIRGULE");
@@ -220,7 +219,7 @@ public class Parser {
 
 		}
 
-		// for (Ident = E;E;E) I
+		// for (Ident = E;E;E) I plutôt Statement (block) ???
 		// TODO : à finir !!!!!!!!!!!!!!!!!!!!!!!!
 		if (lexer.look().getClasse() == Classe.TOK_FOR) {
 
@@ -229,103 +228,160 @@ public class Parser {
 			if (lexer.next().getClasse() != Classe.TOK_PAR_OUVR) {
 				throw new Exception("FOR non suivi d'une PAR_OUVR");
 			}
-			
-//			Arbre exp0 = expression();
-			//FIXME : à voir avec le prof
-			// problème car pas de TOK_EGAL pour expression ou alors une expression
-			// est au-dessus d'une instruction
-			// plutôt instruction par contre le problème est qu'une instruction est suivie
+
+			// Arbre exp0 = expression();
+			// FIXME : à voir avec le prof
+			// problème car pas de TOK_EGAL pour expression ou alors une
+			// expression
+			// est en-dessous d'une instruction
+			// plutôt instruction par contre le problème est qu'une instruction
+			// est suivie
 			// d'un point virgule ...
 			Arbre exp0 = instruction();
 
 			// TODO : peut-être autoriser initialisation vide ?
 			// factoriser
 			if (exp0 == null) {
-				throw new Exception("Pas de première expression dans les parenthèses FOR");
+				throw new Exception(
+						"Pas de première expression dans les parenthèses FOR");
 			}
-//			System.out.println(exp0.getNoeud());
-//			System.out.println(lexer.look().getClasse());
-//			if (lexer.next().getClasse() != Classe.TOK_VIRGULE) {
-//				throw new Exception("E0 non suivi d'une VIRGULE");
-//			}
-			
+			// System.out.println(exp0.getNoeud());
+			// System.out.println(lexer.look().getClasse());
+			// if (lexer.next().getClasse() != Classe.TOK_VIRGULE) {
+			// throw new Exception("E0 non suivi d'une VIRGULE");
+			// }
+
 			Arbre exp1 = expression();
 
 			// TODO : peut-être autoriser initialisation vide ?
 			// factoriser
 			if (exp1 == null) {
-				throw new Exception("Pas de deuxième expression dans les parenthèses FOR");
+				throw new Exception(
+						"Pas de deuxième expression dans les parenthèses FOR");
 			}
 
+			// FIXME : si on part sur instruction alors ici mettre ; au lieu de
+			// ,
 			if (lexer.next().getClasse() != Classe.TOK_VIRGULE) {
 				throw new Exception("E1 non suivi d'une VIRGULE");
 			}
-			
-//			Arbre exp2 = expression();
-			//FIXME : à voir avec le prof
-			// plutôt instruction par contre le problème est qu'une instruction est suivie
+
+			// Arbre exp2 = expression();
+			// FIXME : à voir avec le prof
+			// plutôt instruction par contre le problème est qu'une instruction
+			// est suivie
 			// d'un point virgule ...
 			Arbre exp2 = instruction();
 
 			// TODO : peut-être autoriser initialisation vide ?
 			// factoriser
 			if (exp2 == null) {
-				throw new Exception("Pas de troisième expression dans les parenthèses FOR");
+				throw new Exception(
+						"Pas de troisième expression dans les parenthèses FOR");
 			}
-			
-//			System.out.println(lexer.look().getClasse());
+
+			// System.out.println(lexer.look().getClasse());
 			if (lexer.next().getClasse() != Classe.TOK_PAR_FERM) {
-				throw new Exception("Expression non suivie d'une PAR_FERM");
+				throw new Exception("Pas de PAR_FERM dans le FOR");
 			}
-			
-			//------------------ Profondeur = 4 -----------------//
+
+			// ------------------ Profondeur = 4 -----------------//
 			ArrayList<Arbre> enfantsDepthFour = new ArrayList<Arbre>();
 			Token tokenSeq2 = new Token();
 			tokenSeq2.setClasse(Classe.TOK_SEQ);
-						
+
 			// Statement (block)
 			Arbre ins = instruction();
 			if (ins == null) {
 				throw new Exception("Statement manquant FOR");
 			}
-			
+
 			enfantsDepthFour.add(ins);
 			enfantsDepthFour.add(exp2);
-			
+
 			Arbre arbreDepthFour = new Arbre(tokenSeq2, enfantsDepthFour);
-			
-			//------------------ Profondeur = 3 -----------------//
+
+			// ------------------ Profondeur = 3 -----------------//
 			ArrayList<Arbre> enfantsDepthThree = new ArrayList<Arbre>();
 			Token tokenIf = new Token();
 			tokenIf.setClasse(Classe.TOK_IF);
 			Token tokenBreak = new Token();
 			tokenBreak.setClasse(Classe.TOK_BREAK);
-			
+
 			enfantsDepthThree.add(exp1);
 			enfantsDepthThree.add(arbreDepthFour);
 			enfantsDepthThree.add(new Arbre(tokenBreak, null));
-			
+
 			Arbre arbreDepthThree = new Arbre(tokenIf, enfantsDepthThree);
-			
-			//------------------ Profondeur = 2 -----------------//
+
+			// ------------------ Profondeur = 2 -----------------//
 			ArrayList<Arbre> enfantsDepthTwo = new ArrayList<Arbre>();
 			Token tokenLoop = new Token();
 			tokenLoop.setClasse(Classe.TOK_LOOP);
-			
+
 			enfantsDepthTwo.add(arbreDepthThree);
-			
+
 			Arbre arbreDepthTwo = new Arbre(tokenLoop, enfantsDepthTwo);
-			
-			//------------------ Profondeur = 1 -----------------//
+
+			// ------------------ Profondeur = 1 -----------------//
 			ArrayList<Arbre> enfantsDepthOne = new ArrayList<Arbre>();
 			Token tokenSeq1 = new Token();
 			tokenSeq1.setClasse(Classe.TOK_SEQ);
-			
+
 			enfantsDepthOne.add(exp0);
 			enfantsDepthOne.add(arbreDepthTwo);
 
 			return new Arbre(tokenSeq1, enfantsDepthOne);
 
+		}
+
+		// while (E) I plutôt Statement (block) ???
+		// TODO : à finir !!!!!!!!!!!!!!!!!!!!!!!!
+		if (lexer.look().getClasse() == Classe.TOK_WHILE) {
+			lexer.next(); // lexer sur le WHILE
+
+			if (lexer.next().getClasse() != Classe.TOK_PAR_OUVR) {
+				throw new Exception("WHILE non suivi d'une PAR_OUVR");
+			}
+
+			Arbre exp = expression();
+			if (exp == null) {
+				throw new Exception(
+						"Pas d'expression dans les parenthèses du WHILE");
+			}
+
+			if (lexer.next().getClasse() != Classe.TOK_PAR_FERM) {
+				throw new Exception("Pas de PAR_FERM dans le WHILE");
+			}
+
+			// ------------------ Profondeur = 2 -----------------//
+			ArrayList<Arbre> enfantsDepthTwo = new ArrayList<Arbre>();
+			Token tokenIf = new Token();
+			tokenIf.setClasse(Classe.TOK_IF);
+			Token tokenBreak = new Token();
+			tokenBreak.setClasse(Classe.TOK_BREAK);
+
+			// Statement (block)
+			Arbre ins = instruction();
+			if (ins == null) {
+				throw new Exception("Statement manquant WHILE");
+			}
+
+			enfantsDepthTwo.add(exp);
+			enfantsDepthTwo.add(ins);
+			enfantsDepthTwo.add(new Arbre(tokenBreak, null));
+
+			Arbre arbreDepthTwo = new Arbre(tokenIf, enfantsDepthTwo);
+
+			// ------------------ Profondeur = 1 -----------------//
+			ArrayList<Arbre> enfantsDepthOne = new ArrayList<Arbre>();
+
+			Token tokenLoop = new Token();
+			tokenLoop.setClasse(Classe.TOK_LOOP);
+
+			enfantsDepthOne.add(arbreDepthTwo);
+
+			return new Arbre(tokenLoop, enfantsDepthOne);
 		}
 
 		return null;
@@ -346,6 +402,23 @@ public class Parser {
 
 		if (lexer.look().getClasse() == Classe.TOK_CST_INT) {
 			return new Arbre(lexer.next(), null);
+		}
+		
+		// Opposé : arbre comme pour la soustraction
+		// mais avec un seul enfant
+		if (lexer.look().getClasse() == Classe.TOK_SUB) {
+			Token op = lexer.next();
+			Arbre p = primaire();
+
+			if (p == null) {
+				throw new Exception(
+						"L'opposé n'a pas de valeur (IDENT manquant)");
+			}
+
+			ArrayList<Arbre> enfants = new ArrayList<Arbre>();
+			enfants.add(p);
+
+			return new Arbre(op, enfants);
 		}
 
 		if (lexer.look().getClasse() != Classe.TOK_PAR_OUVR) {
