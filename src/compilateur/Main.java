@@ -19,9 +19,11 @@ public class Main {
 			
 			// TODO: 
 			// Parser :
-			// 			finir instruction()
-			//          savoi si on crée un TOK_BLOCK pour if, else, while, for : attente réponse du prof
-			
+			//   poser la question pour le for au prof ...
+			// Arbre :
+			//   finir l'affichage en Json
+			// Gérénale:
+			//   factoriser + nettoyer + doc
 			
 
 		} catch (Exception e) {
