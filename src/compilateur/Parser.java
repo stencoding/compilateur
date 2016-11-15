@@ -8,16 +8,18 @@ import java.util.ArrayList;
  * 
  * Priorité au plus haut niveau : primaire->multiplicatif->additif->expression
  * 
- * Niveau primaire : P <- ident | cst_int | (E) Niveau multiplicatif : M <- P (*
- * M | / M | % M | epsilon) Niveau additif : A <- M (+ M | - M | epsilon) Niveau
+ * Niveau primaire :
+ * P <- ident | cst_int | (E) | -P
+ * Niveau multiplicatif : M <- P (*
+ * M | / M | % M | epsilon)
+ * Niveau additif : A <- M (+ M | - M | epsilon)
+ * Niveau
  * expression : E <- A
  * 
  */
 public class Parser {
 
 	// position courante du parser (save)
-	private int position;
-	private Token[] tmpTabToken = new Token[10];
 	private Lexer lexer;
 
 	/**
@@ -28,19 +30,13 @@ public class Parser {
 	 */
 	public Parser(Lexer lexer) throws Exception {
 		this.lexer = lexer;
-		this.position = 0;
-		int i = 0;
-		// Token prem = lexer.next();
-		Arbre.affiche(instruction(), 0);
-		// Arbre.afficheJson(instruction(), 0);
-		/*
-		 * while (prem.getClasse() != Classe.TOK_EOF) {
-		 * 
-		 * System.out.println(i); tmpTabToken[i] = prem; //
-		 * System.out.println("tab[0] " + tmpTabToken[i]); // tmpTabToken[i] =
-		 * lexer.next(); prem = lexer.next(); // System.out.println("prem " +
-		 * prem); i++; } // System.out.println(tmpTabToken[2]);
-		 */
+		affichageProg();
+	}
+	
+	public void affichageProg() throws Exception {
+		while(lexer.look().getClasse() != Classe.TOK_EOF) {
+			Arbre.affiche(instruction(), 0);
+		}	
 	}
 
 	/**
@@ -216,7 +212,6 @@ public class Parser {
 			}
 
 			return new Arbre(block, enfants);
-
 		}
 
 		// for (Ident = E;E;E) I plutôt Statement (block) ???
@@ -245,11 +240,6 @@ public class Parser {
 				throw new Exception(
 						"Pas de première expression dans les parenthèses FOR");
 			}
-			// System.out.println(exp0.getNoeud());
-			// System.out.println(lexer.look().getClasse());
-			// if (lexer.next().getClasse() != Classe.TOK_VIRGULE) {
-			// throw new Exception("E0 non suivi d'une VIRGULE");
-			// }
 
 			Arbre exp1 = expression();
 
@@ -262,8 +252,8 @@ public class Parser {
 
 			// FIXME : si on part sur instruction alors ici mettre ; au lieu de
 			// ,
-			if (lexer.next().getClasse() != Classe.TOK_VIRGULE) {
-				throw new Exception("E1 non suivi d'une VIRGULE");
+			if (lexer.next().getClasse() != Classe.TOK_POINT_VIRGULE) {
+				throw new Exception("E1 non suivi d'un POINT_VIRGULE");
 			}
 
 			// Arbre exp2 = expression();
@@ -280,7 +270,6 @@ public class Parser {
 						"Pas de troisième expression dans les parenthèses FOR");
 			}
 
-			// System.out.println(lexer.look().getClasse());
 			if (lexer.next().getClasse() != Classe.TOK_PAR_FERM) {
 				throw new Exception("Pas de PAR_FERM dans le FOR");
 			}
@@ -335,8 +324,7 @@ public class Parser {
 
 		}
 
-		// while (E) I plutôt Statement (block) ???
-		// TODO : à finir !!!!!!!!!!!!!!!!!!!!!!!!
+		// while (E) I 
 		if (lexer.look().getClasse() == Classe.TOK_WHILE) {
 			lexer.next(); // lexer sur le WHILE
 

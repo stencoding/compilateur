@@ -20,7 +20,6 @@ public enum Classe {
 	TOK_EGAL,
 	TOK_DEUX_POINTS,
 	TOK_POINT_VIRGULE,
-	TOK_VIRGULE,
 	// Mots-clés
 	TOK_IF,
 	TOK_ELSE,

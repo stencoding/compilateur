@@ -74,6 +74,15 @@ public class Lexer {
 		while (estEspace(data[this.pos])) {
 			this.pos++;
 		}
+		
+		while (estSautDeLigne(data[this.pos])) {
+			this.pos++;
+		}
+		
+		while (estIndentation(data[this.pos])) {
+			this.pos++;
+		}
+		
 		if (estChiffre(data[this.pos])) {
 			int intTmp = lireInt();
 			token.setChargeInt(intTmp);
@@ -172,13 +181,10 @@ public class Lexer {
 			
 		case ";":
 			token.setClasse(Classe.TOK_POINT_VIRGULE);
-			break;
-			
-		case ",":
-			token.setClasse(Classe.TOK_VIRGULE);
-			break;
-		
+			break;					
 		}
+		
+
 
 		if (token.getClasse() == null) {
 			throw new Exception("caractère inconnu : <" + data[this.pos] + ">");
@@ -219,6 +225,32 @@ public class Lexer {
 	 */
 	private boolean estEspace(String caractere) {
 		if (caractere.equals(" ")) {
+			return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * Si le caractère en paramètre est un saut de ligne
+	 * 
+	 * @param caractere
+	 * @return boolean
+	 */
+	private boolean estSautDeLigne(String caractere) {
+		if (caractere.equals("\n")) {
+			return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * Si le caractère en paramètre est une indentation
+	 * 
+	 * @param caractere
+	 * @return boolean
+	 */
+	private boolean estIndentation(String caractere) {
+		if (caractere.equals("\t")) {
 			return true;
 		}
 		return false;
