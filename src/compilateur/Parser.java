@@ -19,7 +19,6 @@ import java.util.ArrayList;
  */
 public class Parser {
 
-	// position courante du parser (save)
 	private Lexer lexer;
 
 	/**
@@ -30,12 +29,12 @@ public class Parser {
 	 */
 	public Parser(Lexer lexer) throws Exception {
 		this.lexer = lexer;
-		affichageProg();
 	}
 	
-	public void affichageProg() throws Exception {
+	public void affichageParser() throws Exception {
 		while(lexer.look().getClasse() != Classe.TOK_EOF) {
-			Arbre.affiche(instruction(), 0);
+//			Arbre.affiche(instruction(), 0);
+			Arbre.affiche(expression(), 0);
 		}	
 	}
 

@@ -12,11 +12,13 @@ public class Main {
 		try {
 
 			// TESTS POUR LE LEXER
-			Lexer lexer = new Lexer("./files/generale.txt");
+//			Lexer lexer = new Lexer("./files/in/general.txt");
+			Lexer lexer = new Lexer("./files/in/test_exp.txt");
 			
 			// TESTS POUR LE PARSER
 			Parser parser = new Parser(lexer);
-			
+			//arser.affichageParser();
+			Generator generator = new Generator(parser);
 			// TODO: 
 			// Parser :
 			//   poser la question pour le for au prof ...

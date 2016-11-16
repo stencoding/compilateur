@@ -61,7 +61,6 @@ public class Arbre {
 		
 		if (arbre.enfants == null) {
 			return;
-//			return arbre.getNoeud().toString();
 		}
 
 		for (Arbre enfant : arbre.enfants) {

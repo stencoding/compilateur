@@ -1,0 +1,7 @@
+.start
+push.i 3
+push.i 5
+add.i
+push.i 7
+mul.i
+halt
