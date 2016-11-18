@@ -19,9 +19,9 @@ public class Main {
 			Parser parser = new Parser(lexer);
 			//arser.affichageParser();
 			Generator generator = new Generator(parser);
+			//./msm -d -d ../files/out/code_generated.txt 
 			// TODO: 
 			// Parser :
-			//   poser la question pour le for au prof ...
 			// Arbre :
 			//   finir l'affichage en Json
 			// Gérénale:

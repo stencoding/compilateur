@@ -14,7 +14,8 @@ public class TableDeSymbole {
 		this.pile = new Stack<HashMap<String, Symbole>>();
 		
 		// ajout du 1er bloc => scope global (portée global)
-		this.push();
+		// maintenant dans le X
+//		this.push();
 	}
 
 	/**

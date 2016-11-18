@@ -10,6 +10,7 @@ import java.util.ArrayList;
 public class Arbre {
 	
 	private Token noeud;
+	
 	private ArrayList<Arbre> enfants = null;
 
 	public Arbre(Token noeud, ArrayList<Arbre> enfants) {

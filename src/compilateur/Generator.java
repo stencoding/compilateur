@@ -27,7 +27,10 @@ public class Generator {
 			
 			//this.parser.affichageParser();
 			
-			generateExpression(this.parser.expression(), 0);
+//			generateExpression(this.parser.expression(), 0);
+//			generateCode(this.parser.expression());
+
+			generateCode(this.parser.racine());
 			
 			writeLine("halt");
 			
@@ -37,6 +40,29 @@ public class Generator {
 			e.printStackTrace();
 		}
 	}
+	
+	public void generateCode(Arbre arbre) throws IOException {
+		switch (arbre.getNoeud().getClasse()) {
+		
+			case TOK_CST_INT:
+				writeLine("push.i", arbre.getNoeud().getChargeInt());
+				break;
+			case TOK_ADD:
+				generateCode(arbre.getEnfants().get(0));
+				generateCode(arbre.getEnfants().get(1));
+				writeLine("add.i");
+				break;
+			case TOK_MUL:
+				generateCode(arbre.getEnfants().get(0));
+				generateCode(arbre.getEnfants().get(1));
+				writeLine("mul.i");
+				break;
+	
+			default:
+				break;
+		}
+	}
+	
 	
 	public void generateExpression(Arbre arbre, int level) throws IOException {
 		if (arbre == null) {
@@ -63,9 +89,8 @@ public class Generator {
 			writeLine("mul.i");
 			return;
 		}
-
 	}
-	
+		
 	public void writeLine(String instruction) throws IOException {
 		writeLine(instruction, "");
 	}

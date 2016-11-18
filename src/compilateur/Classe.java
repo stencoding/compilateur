@@ -27,9 +27,6 @@ public enum Classe {
 	TOK_WHILE,
 	TOK_VAR,
 	TOK_BLOCK,
-	// FIXME : on peut peut-être utiliser BLOCK ???
-	// ou alors on en a besoin pour identifier une boucle
-	// lors de la lecture de l'arbre
 	TOK_SEQ,
 	TOK_LOOP,
 	TOK_BREAK,

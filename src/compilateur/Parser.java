@@ -19,7 +19,9 @@ import java.util.ArrayList;
  */
 public class Parser {
 
+	private int nvar;
 	private Lexer lexer;
+	private TableDeSymbole tableSymbole;
 
 	/**
 	 * On récupère l'analyseur lexical
@@ -58,7 +60,7 @@ public class Parser {
 	 */
 
 	/**
-	 * Instruction I <- var Ident : TYPE; | Ident = E; | if (E) I (else I |
+	 * Instruction I <- var Ident : TYPE;| Ident = E; | if (E) I (else I |
 	 * epsilon) | while (E) I | {Seq I} | for (Ident = E;E;E) I
 	 * 
 	 * TODO : à finir while et for
@@ -103,6 +105,11 @@ public class Parser {
 			enfants.add(a1);
 			enfants.add(a2);
 
+			Symbole symbole = this.tableSymbole.definir(a1.getNoeud().getChargeStr());
+			symbole.setPosition(nvar);
+			
+			this.nvar++;
+			
 			return new Arbre(op, enfants);
 		}
 
@@ -132,6 +139,8 @@ public class Parser {
 			}
 			enfants.add(en1);
 			enfants.add(en2);
+			
+			Symbole symbole = this.tableSymbole.chercher(en1.getNoeud().getChargeStr());
 
 			return new Arbre(op, enfants);
 		}
@@ -538,5 +547,47 @@ public class Parser {
 	 */
 	public Arbre expression() throws Exception {
 		return comparatif();
+	}
+	
+
+	/**
+	 * Niveau X <- I
+	 * Noeud racine
+	 * 
+	 * @return Arbre
+	 * @throws Exception
+	 */
+	public Arbre racine() throws Exception {
+		if (lexer.next().getClasse() != Classe.TOK_ACC_OUVR) {
+			throw new Exception(
+					"Il manque l'accolade de début de programme");
+		}
+		
+		this.nvar = 0;
+		
+		this.tableSymbole = new TableDeSymbole();
+		// nouvelle portée globale pour les variables => table vide
+		this.tableSymbole.push();
+		
+		ArrayList<Arbre> enfant = new ArrayList<Arbre>();
+		// TODO : à modifier quand grammaire OK
+//		enfant.add(instruction());
+		enfant.add(expression());
+		
+		Token racine = new Token();
+		racine.setClasse(Classe.TOK_SEQ);
+		// Attention on met le nombre de variable totale du programme
+		// dans ChargeInt !!!!
+		racine.setChargeInt(nvar);
+		
+		if (lexer.next().getClasse() != Classe.TOK_ACC_FERM) {
+			throw new Exception(
+					"Il manque l'accolade de fin de programme");
+		}
+		
+		// fin portée globale pour les variables
+		this.tableSymbole.pop();
+			
+		return new Arbre(racine, enfant);
 	}
 }

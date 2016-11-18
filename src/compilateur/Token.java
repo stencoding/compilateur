@@ -7,7 +7,6 @@ public class Token {
 	private String chargeStr;
 	private String fichier;
 	private int ligne;
-	private int position;
 	
 	public Token() {}
 
@@ -49,14 +48,6 @@ public class Token {
 
 	public void setLigne(int ligne) {
 		this.ligne = ligne;
-	}
-
-	public int getPosition() {
-		return position;
-	}
-
-	public void setPosition(int position) {
-		this.position = position;
 	}
 
 	@Override
