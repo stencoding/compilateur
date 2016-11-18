@@ -9,11 +9,11 @@ import java.util.ArrayList;
  */
 public class Arbre {
 	
-	private Token noeud;
+	private Noeud noeud;
 	
 	private ArrayList<Arbre> enfants = null;
 
-	public Arbre(Token noeud, ArrayList<Arbre> enfants) {
+	public Arbre(Noeud noeud, ArrayList<Arbre> enfants) {
 		this.noeud = noeud;
 		this.enfants = enfants;
 	}
@@ -21,14 +21,14 @@ public class Arbre {
 	/**
 	 * @return the noeud
 	 */
-	public Token getNoeud() {
+	public Noeud getNoeud() {
 		return noeud;
 	}
 
 	/**
 	 * @param noeud the noeud to set
 	 */
-	public void setNoeud(Token noeud) {
+	public void setNoeud(Noeud noeud) {
 		this.noeud = noeud;
 	}
 
@@ -82,9 +82,11 @@ public class Arbre {
 		if (arbre == null) return;
 
 		System.out.println("{");
-		System.out.println("\"" + arbre.getNoeud().getClasse() + "\"" + ": {");
-		System.out.println("\"chargeInt\" : " + "\"" + arbre.getNoeud().getChargeInt() + "\",");
-		System.out.println("\"chargeStr\" : " + "\"" + arbre.getNoeud().getChargeStr() + "\",");
+		System.out.println("\"" + arbre.getNoeud().getCategorie() + "\"" + ": {");
+		// FIXME : si on sépare la valeur d'un noeud en 2 (Int et Str 
+		// comme pour Token (cf classe Noeud)
+//		System.out.println("\"chargeInt\" : " + "\"" + arbre.getNoeud().getChargeInt() + "\",");
+//		System.out.println("\"chargeStr\" : " + "\"" + arbre.getNoeud().getChargeStr() + "\",");
 		
 		if (arbre.enfants == null) {
 			System.out.println("}");

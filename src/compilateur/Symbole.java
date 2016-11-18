@@ -12,6 +12,30 @@ public class Symbole {
 	// Position dans la mémoire (adresse mémoire si fonction)
 	private int	position;
 	
+	/**
+	 * Insère le type du symbole en fonction du token
+	 * 
+	 * @param node
+	 * @param symbole
+	 * @throws Exception
+	 */
+	public static void setTypeSymbole (Noeud node, Symbole symbole) throws Exception {
+		// Pour des raisons de simplicité
+		// on créer ici le type à partir du token passé
+		switch (node.getCategorie()) {
+			case INT:
+			case CST_INT:
+				symbole.setType("INT");
+				break;
+			case STR:
+			case CST_STR:
+				symbole.setType("STR");
+				break;
+			default:
+				break;
+		}
+	}
+	
 	public Symbole(String ident) {
 		this.ident = ident;
 	}
@@ -42,7 +66,7 @@ public class Symbole {
 
 	@Override
 	public String toString() {
-		return "Symbole [ident=" + ident + "]";
+		return "Symbole [ident=" + ident + ", type=" + type + ", position=" + position + "]";
 	}
 
 }

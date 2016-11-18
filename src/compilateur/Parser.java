@@ -34,10 +34,9 @@ public class Parser {
 	}
 	
 	public void affichageParser() throws Exception {
-		while(lexer.look().getClasse() != Classe.TOK_EOF) {
 //			Arbre.affiche(instruction(), 0);
-			Arbre.affiche(expression(), 0);
-		}	
+//			Arbre.affiche(expression(), 0);
+			Arbre.affiche(racine(), 0);
 	}
 
 	/**
@@ -72,13 +71,16 @@ public class Parser {
 		// var Ident : TYPE;
 		if (lexer.look().getClasse() == Classe.TOK_VAR) {
 
-			Token op = lexer.next(); // lexer positionné sur VAR
+			Token tok = lexer.next(); // sur var
+			Noeud op = Noeud.tokenToNode(tok);
 
 			if (lexer.look().getClasse() != Classe.TOK_IDENT) {
 				throw new Exception("VAR non suivie d'un IDENT");
 			}
 
-			Arbre a1 = new Arbre(lexer.next(), null); // IDENT
+			Token tokIdent = lexer.next(); // sur ident
+			Noeud opIdent = Noeud.tokenToNode(tokIdent);
+			Arbre a1 = new Arbre(opIdent, null);
 
 			if (lexer.look().getClasse() != Classe.TOK_DEUX_POINTS) {
 				throw new Exception("IDENT non suivi d'un DEUX_POINTS");
@@ -87,12 +89,14 @@ public class Parser {
 			lexer.next(); // lexer positionné sur DEUX_POINTS
 
 			if (lexer.look().getClasse() != Classe.TOK_INT
-					|| lexer.look().getClasse() != Classe.TOK_STR) {
+					&& lexer.look().getClasse() != Classe.TOK_STR) {
 				throw new Exception(
-						"DEUX_POINTS non suivi d'un INT ou d'un STR");
+						"DEUX_POINTS doit être suivi d'un INT ou d'un STR (<" + lexer.look().getClasse() + ">)");
 			}
 
-			Arbre a2 = new Arbre(lexer.next(), null); // INT ou STR
+			Token tokIntOrStr = lexer.next(); // sur int ou str
+			Noeud opIntOrStr = Noeud.tokenToNode(tokIntOrStr);
+			Arbre a2 = new Arbre(opIntOrStr, null);
 
 			// on se positionne sur le point-virgule qui n'est pas à ajouer à
 			// l'arbre
@@ -105,9 +109,10 @@ public class Parser {
 			enfants.add(a1);
 			enfants.add(a2);
 
-			Symbole symbole = this.tableSymbole.definir(a1.getNoeud().getChargeStr());
-			symbole.setPosition(nvar);
-			
+			Symbole symbole = this.tableSymbole.definir(a1.getNoeud().getStrValue());
+			Symbole.setTypeSymbole(a2.getNoeud(), symbole);
+			symbole.setPosition(this.nvar);
+
 			this.nvar++;
 			
 			return new Arbre(op, enfants);
@@ -117,13 +122,17 @@ public class Parser {
 		if (lexer.look().getClasse() == Classe.TOK_IDENT) {
 
 			ArrayList<Arbre> enfants = new ArrayList<Arbre>();
-			// lexer positionné sur IDENT
-			Arbre en1 = new Arbre(lexer.next(), null);
+			
+			Token tokIdent = lexer.next(); // sur =
+			Noeud opIdent = Noeud.tokenToNode(tokIdent);
+			
+			Arbre en1 = new Arbre(opIdent, null);
 
 			if (lexer.look().getClasse() != Classe.TOK_EGAL) {
 				throw new Exception("IDENT non suivie d'un EGAL");
 			}
-			Token op = lexer.next(); // lexer positionné sur =
+			Token tok = lexer.next(); // sur =
+			Noeud op = Noeud.tokenToNode(tok);
 
 			Arbre en2 = expression();
 
@@ -139,8 +148,8 @@ public class Parser {
 			}
 			enfants.add(en1);
 			enfants.add(en2);
-			
-			Symbole symbole = this.tableSymbole.chercher(en1.getNoeud().getChargeStr());
+
+			Symbole symbole = this.tableSymbole.chercher(en1.getNoeud().getStrValue());
 
 			return new Arbre(op, enfants);
 		}
@@ -148,7 +157,8 @@ public class Parser {
 		// if (E) I (else I | epsilon)
 		if (lexer.look().getClasse() == Classe.TOK_IF) {
 
-			Token op = lexer.next(); // lexer sur le IF
+			Token tok = lexer.next(); // sur if
+			Noeud op = Noeud.tokenToNode(tok);
 
 			if (lexer.look().getClasse() != Classe.TOK_PAR_OUVR) {
 				throw new Exception("IF non suivi d'une PAR_OUVR");
@@ -207,6 +217,8 @@ public class Parser {
 
 			Token block = new Token();
 			block.setClasse(Classe.TOK_BLOCK);
+			Noeud nodeBlock = new Noeud(Categorie.BREAK);
+			
 
 			ArrayList<Arbre> enfants = new ArrayList<Arbre>();
 
@@ -219,7 +231,7 @@ public class Parser {
 				throw new Exception("Accolade fermante manquante");
 			}
 
-			return new Arbre(block, enfants);
+			return new Arbre(nodeBlock, enfants);
 		}
 
 		// for (Ident = E;E;E) I plutôt Statement (block) ???
@@ -258,8 +270,6 @@ public class Parser {
 						"Pas de deuxième expression dans les parenthèses FOR");
 			}
 
-			// FIXME : si on part sur instruction alors ici mettre ; au lieu de
-			// ,
 			if (lexer.next().getClasse() != Classe.TOK_POINT_VIRGULE) {
 				throw new Exception("E1 non suivi d'un POINT_VIRGULE");
 			}
@@ -284,8 +294,7 @@ public class Parser {
 
 			// ------------------ Profondeur = 4 -----------------//
 			ArrayList<Arbre> enfantsDepthFour = new ArrayList<Arbre>();
-			Token tokenSeq2 = new Token();
-			tokenSeq2.setClasse(Classe.TOK_SEQ);
+			Noeud nodeSeq2 = new Noeud(Categorie.SEQ);
 
 			// Statement (block)
 			Arbre ins = instruction();
@@ -296,39 +305,35 @@ public class Parser {
 			enfantsDepthFour.add(ins);
 			enfantsDepthFour.add(exp2);
 
-			Arbre arbreDepthFour = new Arbre(tokenSeq2, enfantsDepthFour);
+			Arbre arbreDepthFour = new Arbre(nodeSeq2, enfantsDepthFour);
 
 			// ------------------ Profondeur = 3 -----------------//
 			ArrayList<Arbre> enfantsDepthThree = new ArrayList<Arbre>();
-			Token tokenIf = new Token();
-			tokenIf.setClasse(Classe.TOK_IF);
-			Token tokenBreak = new Token();
-			tokenBreak.setClasse(Classe.TOK_BREAK);
+			Noeud nodeIf = new Noeud(Categorie.IF);
+			Noeud nodeBreak = new Noeud(Categorie.BREAK);
 
 			enfantsDepthThree.add(exp1);
 			enfantsDepthThree.add(arbreDepthFour);
-			enfantsDepthThree.add(new Arbre(tokenBreak, null));
+			enfantsDepthThree.add(new Arbre(nodeBreak, null));
 
-			Arbre arbreDepthThree = new Arbre(tokenIf, enfantsDepthThree);
+			Arbre arbreDepthThree = new Arbre(nodeIf, enfantsDepthThree);
 
 			// ------------------ Profondeur = 2 -----------------//
 			ArrayList<Arbre> enfantsDepthTwo = new ArrayList<Arbre>();
-			Token tokenLoop = new Token();
-			tokenLoop.setClasse(Classe.TOK_LOOP);
+			Noeud nodeLoop = new Noeud(Categorie.LOOP);
 
 			enfantsDepthTwo.add(arbreDepthThree);
 
-			Arbre arbreDepthTwo = new Arbre(tokenLoop, enfantsDepthTwo);
+			Arbre arbreDepthTwo = new Arbre(nodeLoop, enfantsDepthTwo);
 
 			// ------------------ Profondeur = 1 -----------------//
 			ArrayList<Arbre> enfantsDepthOne = new ArrayList<Arbre>();
-			Token tokenSeq1 = new Token();
-			tokenSeq1.setClasse(Classe.TOK_SEQ);
+			Noeud nodeSeq1 = new Noeud(Categorie.SEQ);
 
 			enfantsDepthOne.add(exp0);
 			enfantsDepthOne.add(arbreDepthTwo);
 
-			return new Arbre(tokenSeq1, enfantsDepthOne);
+			return new Arbre(nodeSeq1, enfantsDepthOne);
 
 		}
 
@@ -352,10 +357,8 @@ public class Parser {
 
 			// ------------------ Profondeur = 2 -----------------//
 			ArrayList<Arbre> enfantsDepthTwo = new ArrayList<Arbre>();
-			Token tokenIf = new Token();
-			tokenIf.setClasse(Classe.TOK_IF);
-			Token tokenBreak = new Token();
-			tokenBreak.setClasse(Classe.TOK_BREAK);
+			Noeud nodeIf = new Noeud(Categorie.IF);
+			Noeud nodeBreak = new Noeud(Categorie.BREAK);
 
 			// Statement (block)
 			Arbre ins = instruction();
@@ -365,19 +368,19 @@ public class Parser {
 
 			enfantsDepthTwo.add(exp);
 			enfantsDepthTwo.add(ins);
-			enfantsDepthTwo.add(new Arbre(tokenBreak, null));
+			
+			enfantsDepthTwo.add(new Arbre(nodeBreak, null));
 
-			Arbre arbreDepthTwo = new Arbre(tokenIf, enfantsDepthTwo);
+			Arbre arbreDepthTwo = new Arbre(nodeIf, enfantsDepthTwo);
 
 			// ------------------ Profondeur = 1 -----------------//
 			ArrayList<Arbre> enfantsDepthOne = new ArrayList<Arbre>();
 
-			Token tokenLoop = new Token();
-			tokenLoop.setClasse(Classe.TOK_LOOP);
+			Noeud nodeLoop = new Noeud(Categorie.LOOP);
 
 			enfantsDepthOne.add(arbreDepthTwo);
 
-			return new Arbre(tokenLoop, enfantsDepthOne);
+			return new Arbre(nodeLoop, enfantsDepthOne);
 		}
 
 		return null;
@@ -393,17 +396,22 @@ public class Parser {
 	public Arbre primaire() throws Exception {
 
 		if (lexer.look().getClasse() == Classe.TOK_IDENT) {
-			return new Arbre(lexer.next(), null);
+			Token tok = lexer.next(); // sur ident
+			Noeud op = Noeud.tokenToNode(tok);
+			return new Arbre(op, null);
 		}
 
 		if (lexer.look().getClasse() == Classe.TOK_CST_INT) {
-			return new Arbre(lexer.next(), null);
+			Token tok = lexer.next(); // sur cst_int
+			Noeud op = Noeud.tokenToNode(tok);
+			return new Arbre(op, null);
 		}
 		
 		// Opposé : arbre comme pour la soustraction
 		// mais avec un seul enfant
 		if (lexer.look().getClasse() == Classe.TOK_SUB) {
-			Token op = lexer.next();
+			Token tok = lexer.next(); // sur sub
+			Noeud op = Noeud.tokenToNode(tok);
 			Arbre p = primaire();
 
 			if (p == null) {
@@ -455,7 +463,8 @@ public class Parser {
 		if (lexer.look().getClasse() == Classe.TOK_MUL
 				|| lexer.look().getClasse() == Classe.TOK_DIV
 				|| lexer.look().getClasse() == Classe.TOK_MODULO) {
-			Token op = lexer.next();
+			Token tok = lexer.next(); // sur opérateur arithmétique
+			Noeud op = Noeud.tokenToNode(tok);
 			Arbre a2 = multiplicatif();
 
 			if (a2 == null) {
@@ -487,7 +496,8 @@ public class Parser {
 
 		if (lexer.look().getClasse() == Classe.TOK_ADD
 				|| lexer.look().getClasse() == Classe.TOK_SUB) {
-			Token op = lexer.next();
+			Token tok = lexer.next(); // sur opérateur arithmétique
+			Noeud op = Noeud.tokenToNode(tok);
 			Arbre a2 = additif();
 			if (a2 == null) {
 				throw new Exception(
@@ -523,7 +533,8 @@ public class Parser {
 				|| lexer.look().getClasse() == Classe.TOK_SUP
 				|| lexer.look().getClasse() == Classe.TOK_INF_EGAL
 				|| lexer.look().getClasse() == Classe.TOK_SUP_EGAL) {
-			Token op = lexer.next();
+			Token tok = lexer.next(); // sur opérateur de comparaison
+			Noeud op = Noeud.tokenToNode(tok);
 			Arbre a2 = comparatif();
 			if (a2 == null) {
 				throw new Exception(
@@ -571,14 +582,29 @@ public class Parser {
 		
 		ArrayList<Arbre> enfant = new ArrayList<Arbre>();
 		// TODO : à modifier quand grammaire OK
-//		enfant.add(instruction());
-		enfant.add(expression());
+		// FIXME : le problème ici est que l'on boucle sur Classe.TOK_ACC_FERM,
+		// la dernière accolade du programme. Ce qui est normale puisque dans
+		// instruction on n'utilise pas expression et donc il ne connait pas ce token
+		// et donc n'avance pas quand il est dessus
+		// ou alors il faudrait avancer le token même quand il ne le connait pas
+		// A VOIR : peut-être corrigé en changeant la grammaire
+		int i = 0;
+		while(lexer.look().getClasse() != Classe.TOK_EOF) {
+			i++;
+			if (i==10000) {
+				throw new Exception("boucle infinie");
+			}
+			
+			enfant.add(instruction());
+			if (lexer.look().getClasse() == Classe.TOK_ACC_FERM) {
+				break;
+			}
+//			enfant.add(expression());
+		}
 		
-		Token racine = new Token();
-		racine.setClasse(Classe.TOK_SEQ);
-		// Attention on met le nombre de variable totale du programme
-		// dans ChargeInt !!!!
-		racine.setChargeInt(nvar);
+		Noeud racine = new Noeud(Categorie.RACINE);
+		// on met le nombre total de variables dans le programme
+		racine.setIntValue(this.nvar);
 		
 		if (lexer.next().getClasse() != Classe.TOK_ACC_FERM) {
 			throw new Exception(

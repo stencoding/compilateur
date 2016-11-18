@@ -178,6 +178,10 @@ public class Lexer {
 			this.pos--;
 			token.setClasse(Classe.TOK_INF);
 			break;
+		
+		case ":":
+			token.setClasse(Classe.TOK_DEUX_POINTS);
+			break;	
 			
 		case ";":
 			token.setClasse(Classe.TOK_POINT_VIRGULE);

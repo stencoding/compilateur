@@ -29,6 +29,7 @@ public class Generator {
 			
 //			generateExpression(this.parser.expression(), 0);
 //			generateCode(this.parser.expression());
+//			Arbre.affiche(this.parser.racine(), 0);
 
 			generateCode(this.parser.racine());
 			
@@ -42,17 +43,24 @@ public class Generator {
 	}
 	
 	public void generateCode(Arbre arbre) throws IOException {
-		switch (arbre.getNoeud().getClasse()) {
-		
-			case TOK_CST_INT:
-				writeLine("push.i", arbre.getNoeud().getChargeInt());
+		switch (arbre.getNoeud().getCategorie()) {
+			case RACINE:
+				// on créé les cases mémoires pour toutes les variables du programme
+				for(int i = 0; i < arbre.getNoeud().getIntValue() ; i++) {
+					// TODO : voir si on doit initialiser à 0 ou à vide ???
+					writeLine("push.i", arbre.getNoeud().getPosition());
+				}
+				generateCode(arbre.getEnfants().get(0));
 				break;
-			case TOK_ADD:
+			case CST_INT:
+				writeLine("push.i", arbre.getNoeud().getIntValue());
+				break;
+			case ADD:
 				generateCode(arbre.getEnfants().get(0));
 				generateCode(arbre.getEnfants().get(1));
 				writeLine("add.i");
 				break;
-			case TOK_MUL:
+			case MUL:
 				generateCode(arbre.getEnfants().get(0));
 				generateCode(arbre.getEnfants().get(1));
 				writeLine("mul.i");
@@ -70,8 +78,8 @@ public class Generator {
 		}
 		
 		if (arbre.getEnfants() == null) {
-			if (arbre.getNoeud().getClasse() == Classe.TOK_CST_INT) {
-				writeLine("push.i", arbre.getNoeud().getChargeInt());
+			if (arbre.getNoeud().getCategorie() == Categorie.CST_INT) {
+				writeLine("push.i", arbre.getNoeud().getIntValue());
 			}
 			return;
 		}
@@ -80,12 +88,12 @@ public class Generator {
 			generateExpression(enfant, level + 1);
 		}
 		
-		if (arbre.getNoeud().getClasse() == Classe.TOK_ADD){
+		if (arbre.getNoeud().getCategorie() == Categorie.ADD){
 			writeLine("add.i");
 			return;
 		}
 		
-		if (arbre.getNoeud().getClasse() == Classe.TOK_MUL){
+		if (arbre.getNoeud().getCategorie() == Categorie.MUL){
 			writeLine("mul.i");
 			return;
 		}

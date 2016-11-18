@@ -13,12 +13,13 @@ public class Main {
 
 			// TESTS POUR LE LEXER
 //			Lexer lexer = new Lexer("./files/in/general.txt");
-			Lexer lexer = new Lexer("./files/in/test_exp.txt");
+//			Lexer lexer = new Lexer("./files/in/test_exp.txt");
+			Lexer lexer = new Lexer("./files/in/test_var.txt");
 			
 			// TESTS POUR LE PARSER
 			Parser parser = new Parser(lexer);
-			//arser.affichageParser();
-			Generator generator = new Generator(parser);
+			parser.affichageParser();
+//			Generator generator = new Generator(parser);
 			//./msm -d -d ../files/out/code_generated.txt 
 			// TODO: 
 			// Parser :
