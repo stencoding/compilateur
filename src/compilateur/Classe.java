@@ -20,6 +20,7 @@ public enum Classe {
 	TOK_EGAL,
 	TOK_DEUX_POINTS,
 	TOK_POINT_VIRGULE,
+	TOK_VIRGULE,
 	// Mots-clés
 	TOK_IF,
 	TOK_ELSE,
@@ -30,6 +31,7 @@ public enum Classe {
 	TOK_SEQ,
 	TOK_LOOP,
 	TOK_BREAK,
+	TOK_RETURN,
 	// Type de variable
 	TOK_INT,
 	TOK_STR,

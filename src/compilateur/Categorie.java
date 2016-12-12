@@ -25,6 +25,7 @@ public enum Categorie {
 	LOOP,
 	BREAK,
 	RACINE,
+	CALL,
 	// Type de variable
 	INT,
 	STR,
