@@ -37,20 +37,46 @@ public class Generator {
 			
 			this.fichier.close();
 			
+//			Runtime runtime = Runtime.getRuntime();
+			//./msm -d -d ../files/out/code_generated.txt 
+//	        Process p =runtime.exec(new String[] { "./MSM/msm","../files/out/code_generated.txt"}); // la commande
+//	        Thread.sleep(9000); // pause de 9 secondes
+//	        p.destroy(); // détruire le processus
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 	
 	public void generateCode(Arbre arbre) throws IOException {
+		System.out.println(arbre.getNoeud().getCategorie());
 		switch (arbre.getNoeud().getCategorie()) {
 			case RACINE:
 				// on créé les cases mémoires pour toutes les variables du programme
 				for(int i = 0; i < arbre.getNoeud().getIntValue() ; i++) {
 					// TODO : voir si on doit initialiser à 0 ou à vide ???
-					writeLine("push.i", arbre.getNoeud().getPosition());
+					writeLine("push.i", i);
+//					writeLine("push.i", arbre.getNoeud().getPosition());
 				}
+				// boucle sur chaque enfant sous la racine
+				int nbEnfants = arbre.getEnfants().size();
+				for(int i = 0; i < nbEnfants ; i++) {
+					generateCode(arbre.getEnfants().get(i));
+				}
+				
+				break;
+			case VAR:
 				generateCode(arbre.getEnfants().get(0));
+				generateCode(arbre.getEnfants().get(1));
+				break;
+			case EGAL:
+				generateCode(arbre.getEnfants().get(0));
+				generateCode(arbre.getEnfants().get(1));
+				// TODO : à finir en récupérant sa position
+//				writeLine("set", arbre.getNoeud().getPosition());
+				break;
+			case IDENT:
+				writeLine("get", arbre.getNoeud().getPosition());
 				break;
 			case CST_INT:
 				writeLine("push.i", arbre.getNoeud().getIntValue());
@@ -71,7 +97,13 @@ public class Generator {
 		}
 	}
 	
-	
+	/**
+	 * DEPRECATED
+	 * 
+	 * @param arbre
+	 * @param level
+	 * @throws IOException
+	 */
 	public void generateExpression(Arbre arbre, int level) throws IOException {
 		if (arbre == null) {
 			return;

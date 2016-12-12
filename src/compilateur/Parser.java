@@ -80,6 +80,7 @@ public class Parser {
 
 			Token tokIdent = lexer.next(); // sur ident
 			Noeud opIdent = Noeud.tokenToNode(tokIdent);
+			opIdent.setPosition(this.nvar);
 			Arbre a1 = new Arbre(opIdent, null);
 
 			if (lexer.look().getClasse() != Classe.TOK_DEUX_POINTS) {
@@ -96,6 +97,7 @@ public class Parser {
 
 			Token tokIntOrStr = lexer.next(); // sur int ou str
 			Noeud opIntOrStr = Noeud.tokenToNode(tokIntOrStr);
+						
 			Arbre a2 = new Arbre(opIntOrStr, null);
 
 			// on se positionne sur le point-virgule qui n'est pas à ajouer à
@@ -110,8 +112,8 @@ public class Parser {
 			enfants.add(a2);
 
 			Symbole symbole = this.tableSymbole.definir(a1.getNoeud().getStrValue());
-			Symbole.setTypeSymbole(a2.getNoeud(), symbole);
 			symbole.setPosition(this.nvar);
+			Symbole.setTypeSymbole(a2.getNoeud(), symbole);
 
 			this.nvar++;
 			
@@ -149,6 +151,7 @@ public class Parser {
 			enfants.add(en1);
 			enfants.add(en2);
 
+			// TODO : à quoi il sert ?????
 			Symbole symbole = this.tableSymbole.chercher(en1.getNoeud().getStrValue());
 
 			return new Arbre(op, enfants);
@@ -236,6 +239,7 @@ public class Parser {
 
 		// for (Ident = E;E;E) I plutôt Statement (block) ???
 		// TODO : à finir !!!!!!!!!!!!!!!!!!!!!!!!
+		// for (Affectation;Expression;Affectation)
 		if (lexer.look().getClasse() == Classe.TOK_FOR) {
 
 			lexer.next(); // lexer sur le FOR
