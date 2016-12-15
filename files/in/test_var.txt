@@ -1,7 +1,5 @@
 int main() {
 	var x : int;
-	var y : int;
 	x=7;
-	y=8+x;
-	return x + y;
+	return x;
 }

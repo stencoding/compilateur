@@ -1,3 +1,27 @@
 .start
 	jump main 
+	.main 
+	push.i 0
+	push.i 0
+	push.i 0
+	push.i 5
+	set 0
+	push.i 3
+	set 1
+	prep toto
+	get 0
+	get 1
+	call 2
+	set 2
+	prep tata
+	call 0
+	push.i 0
+	.tata 
+	push.i 0
+	push.i 0
+	.toto 
+	get 0
+	get 1
+	mul.i 
+	push.i 0
 	halt 

@@ -69,7 +69,7 @@ public class Generator {
 				}
 				
 				generateCode(arbre.getEnfants().get(3));
-//				writeLine("push.i", 0);
+				writeLine("push.i", 0);
 //				writeLine("ret");
 								
 				break;
@@ -77,13 +77,16 @@ public class Generator {
 				// boucle sur chaque enfant sous block
 				for(int i = 0; i < arbre.getEnfants().size() ; i++) {
 					generateCode(arbre.getEnfants().get(i));
-				}
-								
+				}								
 				break;
-//			case VAR:
-//				generateCode(arbre.getEnfants().get(0));
-//				generateCode(arbre.getEnfants().get(1));
-//				break;
+			case CALL:
+				writeLine("prep", arbre.getEnfants().get(0).getNoeud().getStrValue());	
+				for(int i = 0 ; i < arbre.getNoeud().getIntValue() ; i++)
+				{
+					generateCode(arbre.getEnfants().get(i+1));
+				}
+				writeLine("call", arbre.getNoeud().getIntValue());
+				break;
 			case EGAL:
 				if(arbre.getEnfants().get(0).getNoeud().getCategorie() != Categorie.IDENT) {
 					generateCode(arbre.getEnfants().get(0));	
@@ -91,8 +94,6 @@ public class Generator {
 				if(arbre.getEnfants().get(1).getNoeud().getCategorie() != Categorie.IDENT) {
 					generateCode(arbre.getEnfants().get(1));
 				}
-				
-				// TODO : à finir en récupérant sa position
 				writeLine("set", arbre.getEnfants().get(0).getNoeud().getPosition());
 				break;
 			case IDENT:
@@ -102,15 +103,8 @@ public class Generator {
 				writeLine("push.i", arbre.getNoeud().getIntValue());
 				break;
 			case ADD:
-				if(arbre.getEnfants().get(0).getNoeud().getCategorie() != Categorie.IDENT) {
-					generateCode(arbre.getEnfants().get(0));	
-				}
-
-				if(arbre.getEnfants().get(1).getNoeud().getCategorie() != Categorie.IDENT) {
-					generateCode(arbre.getEnfants().get(1));
-					
-				}
-//				generateCode(arbre.getEnfants().get(1));
+				generateCode(arbre.getEnfants().get(0));	
+				generateCode(arbre.getEnfants().get(1));
 				writeLine("add.i");
 				break;
 			case MUL:

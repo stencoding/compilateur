@@ -13,11 +13,24 @@ public class Main {
 
 			// TESTS POUR LE LEXER
 //			Lexer lexer = new Lexer("./files/in/general.txt");
+			// test_exp OK
 //			Lexer lexer = new Lexer("./files/in/test_exp.txt");
-			Lexer lexer = new Lexer("./files/in/test_var.txt");
-			Lexer lexer2 = new Lexer("./files/in/test_var.txt");
+//			Lexer lexer2 = new Lexer("./files/in/test_exp.txt");
+			
+			// test_var OK
+//			Lexer lexer = new Lexer("./files/in/test_var.txt");
+//			Lexer lexer2 = new Lexer("./files/in/test_var.txt");
+			
+			//test_multi_var OK
+//			Lexer lexer = new Lexer("./files/in/test_multi_var.txt");
+//			Lexer lexer2 = new Lexer("./files/in/test_multi_var.txt");
+			
 //			Lexer lexer = new Lexer("./files/in/test_for.txt");
-//			Lexer lexer = new Lexer("./files/in/test_function.txt");
+
+			//test_function OK - A REVOIR
+			Lexer lexer = new Lexer("./files/in/test_function.txt");			
+			Lexer lexer2 = new Lexer("./files/in/test_function.txt");
+
 			
 			// TESTS POUR LE PARSER
 			Parser parser = new Parser(lexer);

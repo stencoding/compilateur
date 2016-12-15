@@ -2,12 +2,16 @@ int main() {
 	var x : int;
 	var y : int;
 	var z : int;
-	x=7;
-	y=8;
+	x=5;
+	y=3;
 	z = toto(x, y);
+	return tata();
+}
+
+int tata() {
+	return 0;
 }
 
 int toto(a, b) {
-	var z : int;
-	z = a+b;
+	return a*b;
 }

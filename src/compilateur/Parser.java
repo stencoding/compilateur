@@ -2,8 +2,6 @@ package compilateur;
 
 import java.util.ArrayList;
 
-import javax.swing.plaf.synth.SynthSpinnerUI;
-
 /**
  * 
  * Analyseur syntaxique (FRONTEND)
@@ -360,13 +358,15 @@ public class Parser {
 				ArrayList<Arbre> enfants = new ArrayList<Arbre>();
 
 				enfants.add(new Arbre(op, null));
-
+				// compteur d'argument de la fonction
+				int cpt = 0;
 				Arbre e = expression();
 				if (e != null) {
 					enfants.add(e);
-
+					cpt++;
 					while (lexer.look().getClasse() == Classe.TOK_VIRGULE) {
 						lexer.next(); // on avance
+						cpt++;
 						enfants.add(expression());
 					}
 				}
@@ -374,7 +374,7 @@ public class Parser {
 				if (lexer.next().getClasse() != Classe.TOK_PAR_FERM) {
 					throw new Exception("Pas de parenthèse fermante");
 				}
-
+				call.setIntValue(cpt);
 				return new Arbre(call, enfants);
 			}
 
