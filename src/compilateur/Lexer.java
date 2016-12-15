@@ -385,6 +385,10 @@ public class Lexer {
 		case "int":
 			motCle = Classe.TOK_INT;
 			break;
+			
+		case "return":
+			motCle = Classe.TOK_RETURN;
+			break;
 		}
 		return motCle;
 	}

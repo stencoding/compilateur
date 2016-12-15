@@ -15,17 +15,23 @@ public class Main {
 //			Lexer lexer = new Lexer("./files/in/general.txt");
 //			Lexer lexer = new Lexer("./files/in/test_exp.txt");
 			Lexer lexer = new Lexer("./files/in/test_var.txt");
+			Lexer lexer2 = new Lexer("./files/in/test_var.txt");
 //			Lexer lexer = new Lexer("./files/in/test_for.txt");
 //			Lexer lexer = new Lexer("./files/in/test_function.txt");
 			
 			// TESTS POUR LE PARSER
 			Parser parser = new Parser(lexer);
-//			parser.affichageParser();
-			Generator generator = new Generator(parser);
-			//./msm -d -d ../files/out/code_generated.txt
+			parser.affichageParser();
+			Parser parserG = new Parser(lexer2);			
+			Generator generator = new Generator(parserG);
+			// A exécuter à la racine du projet
+			//./MSM/msm -d -d ./files/out/code_generated.txt
 			// QUESTIONS :
 			// PARSER :
 			//   - voir pb noté dans TODO
+			
+			
+			//--------- VOIR problème gestion des variables dans la génération du code !!!!!!!
 			
 			// Finir la gestion des fonctions
 			// Finir génération du code : variable, boucle, fonction

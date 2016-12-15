@@ -321,6 +321,7 @@ public class Parser {
 
 		// return E;
 		if (lexer.look().getClasse() == Classe.TOK_RETURN) {
+			lexer.next(); // lexer sur le return
 			Arbre a1 = expression();
 
 			if (a1 == null) {
@@ -381,7 +382,6 @@ public class Parser {
 			Symbole symbole = this.tableSymbole.chercher(tok.getChargeStr());
 			op.setPosition(symbole.getPosition());
 			
-
 			return new Arbre(op, null);
 		}
 
@@ -623,6 +623,11 @@ public class Parser {
 			throw new Exception("Un nom de fonction doit être suivi d'une parenthèse ouvrante (<"
 					+ lexer.look().getClasse() + ">)");
 		}
+		
+		// initialisation du noeud ARGS
+		Noeud args = new Noeud(Categorie.ARGS);
+		ArrayList<Arbre> enfantsArg = new ArrayList<Arbre>();
+		Arbre arbreArgs = new Arbre(args, null);
 
 		// si pas de parenthèse fermante on est dans liste des arguments
 		if (lexer.look().getClasse() != Classe.TOK_PAR_FERM) {
@@ -642,10 +647,6 @@ public class Parser {
 			Symbole.setTypeSymbole(nodeArg, symbole);
 
 			this.narg++;
-
-			Noeud args = new Noeud(Categorie.ARGS);
-
-			ArrayList<Arbre> enfantsArg = new ArrayList<Arbre>();
 
 			enfantsArg.add(new Arbre(nodeArg, null));
 
@@ -668,11 +669,10 @@ public class Parser {
 				this.narg++;
 			}
 
-			Arbre arbreArgs = new Arbre(args, enfantsArg);
-			enfantsFct.add(arbreArgs);
-			args.setIntValue(this.narg);
 		}
 		
+		enfantsFct.add(arbreArgs);
+		args.setIntValue(this.narg);		
 
 		this.nvar = this.narg;
 
