@@ -26,6 +26,8 @@ public enum Categorie {
 	BREAK,
 	RACINE,
 	CALL,
+	FUNCTION,
+	ARGS,
 	// Type de variable
 	INT,
 	STR,

@@ -185,10 +185,12 @@ public class Lexer {
 			
 		case ";":
 			token.setClasse(Classe.TOK_POINT_VIRGULE);
-			break;					
+			break;
+			
+		case ",":
+			token.setClasse(Classe.TOK_VIRGULE);
+			break;
 		}
-		
-
 
 		if (token.getClasse() == null) {
 			throw new Exception("caractère inconnu : <" + data[this.pos] + ">");

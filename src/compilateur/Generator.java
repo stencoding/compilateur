@@ -23,7 +23,7 @@ public class Generator {
 		try {
 			this.fichier = new BufferedWriter(new FileWriter("./files/out/code_generated.txt"));
 
-			this.fichier.write(".start");
+//			this.fichier.write(".start");
 			
 			//this.parser.affichageParser();
 			
@@ -49,9 +49,12 @@ public class Generator {
 	}
 	
 	public void generateCode(Arbre arbre) throws IOException {
-		System.out.println(arbre.getNoeud().getCategorie());
 		switch (arbre.getNoeud().getCategorie()) {
 			case RACINE:
+				this.fichier.write(".start");
+				writeLine("jump main");
+				break;
+			case FUNCTION:
 				// on créé les cases mémoires pour toutes les variables du programme
 				for(int i = 0; i < arbre.getNoeud().getIntValue() ; i++) {
 					// TODO : voir si on doit initialiser à 0 ou à vide ???

@@ -1,4 +1,4 @@
-{
+int main() {
 	var x : int;
 	var y : int;
 	x=7;

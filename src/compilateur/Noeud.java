@@ -10,19 +10,10 @@ public class Noeud {
 	
 	// Valeur du noeud si str (= chargeStr d'un Token)
 	private String strValue;
-	
-	// Valeur du noeud (= chargeInt ou chargeStr d'un Token)
-//	private String value;
-	
+		
 	// Position dans la pile (slot)
 	private int position;
-	
-	/*public Noeud(Categorie categorie, int intValue, String strValue) {
-		this.categorie = categorie;
-		this.intValue = intValue;
-		this.strValue = strValue;
-	}*/
-	
+		
 	public Noeud(Categorie categorie) {
 		this.categorie = categorie;
 	}

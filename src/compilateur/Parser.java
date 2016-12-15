@@ -2,24 +2,23 @@ package compilateur;
 
 import java.util.ArrayList;
 
+import javax.swing.plaf.synth.SynthSpinnerUI;
+
 /**
  * 
  * Analyseur syntaxique (FRONTEND)
  * 
  * Priorité au plus haut niveau : primaire->multiplicatif->additif->expression
  * 
- * Niveau primaire :
- * P <- ident | cst_int | (E) | -P
- * Niveau multiplicatif : M <- P (*
- * M | / M | % M | epsilon)
- * Niveau additif : A <- M (+ M | - M | epsilon)
- * Niveau
- * expression : E <- A
+ * Niveau primaire : P <- ident | cst_int | (E) | -P Niveau multiplicatif : M <-
+ * P (* M | / M | % M | epsilon) Niveau additif : A <- M (+ M | - M | epsilon)
+ * Niveau expression : E <- A
  * 
  */
 public class Parser {
 
 	private int nvar;
+	private int narg;
 	private Lexer lexer;
 	private TableDeSymbole tableSymbole;
 
@@ -32,19 +31,26 @@ public class Parser {
 	public Parser(Lexer lexer) throws Exception {
 		this.lexer = lexer;
 	}
-	
+
 	public void affichageParser() throws Exception {
-			Arbre.affiche(racine(), 0);
+		Arbre.affiche(racine(), 0);
 	}
 
 	/**
-	 * Instruction I <- var Ident : TYPE;| Ident = E; | if (E) I (else I |
-	 * epsilon) | while (E) I | {Seq I} | for (Ident = E;E;E) I
-	 *  
+	 * Instruction
+	 * I <- var Ident : TYPE;
+	 * | Affectation 
+	 * | if (E) I (else I |epsilon) 
+	 * | while (E) I 
+	 * | {Seq I} 
+	 * | for (Ident = Aff;E;Aff) I
+	 * | return E ";"
+	 * 
 	 * @return Arbre
 	 * @throws Exception
 	 */
 	public Arbre instruction() throws Exception {
+		
 		// var Ident : TYPE;
 		if (lexer.look().getClasse() == Classe.TOK_VAR) {
 
@@ -66,15 +72,14 @@ public class Parser {
 
 			lexer.next(); // lexer positionné sur DEUX_POINTS
 
-			if (lexer.look().getClasse() != Classe.TOK_INT
-					&& lexer.look().getClasse() != Classe.TOK_STR) {
+			if (lexer.look().getClasse() != Classe.TOK_INT && lexer.look().getClasse() != Classe.TOK_STR) {
 				throw new Exception(
 						"DEUX_POINTS doit être suivi d'un INT ou d'un STR (<" + lexer.look().getClasse() + ">)");
 			}
 
 			Token tokIntOrStr = lexer.next(); // sur int ou str
 			Noeud opIntOrStr = Noeud.tokenToNode(tokIntOrStr);
-						
+
 			Arbre a2 = new Arbre(opIntOrStr, null);
 
 			if (lexer.next().getClasse() != Classe.TOK_POINT_VIRGULE) {
@@ -90,19 +95,19 @@ public class Parser {
 			Symbole.setTypeSymbole(a2.getNoeud(), symbole);
 
 			this.nvar++;
-			
+
 			return new Arbre(op, enfants);
 		}
 
 		// A;
 		if (lexer.look().getClasse() == Classe.TOK_IDENT) {
-			
+
 			Arbre a1 = affectation();
-			
+
 			if (lexer.next().getClasse() != Classe.TOK_POINT_VIRGULE) {
-				throw new Exception("Expression non suivie d'un POINT_VIRGULE");
+				throw new Exception("Affectation non suivie d'un POINT_VIRGULE");
 			}
-			
+
 			return a1;
 		}
 
@@ -170,7 +175,7 @@ public class Parser {
 			Token block = new Token();
 			block.setClasse(Classe.TOK_BLOCK);
 			Noeud nodeBlock = new Noeud(Categorie.BLOCK);
-			
+
 			ArrayList<Arbre> enfants = new ArrayList<Arbre>();
 
 			while (ins != null) {
@@ -197,10 +202,9 @@ public class Parser {
 			Arbre exp0 = affectation();
 
 			if (exp0 == null) {
-				throw new Exception(
-						"Pas de première expression dans les parenthèses FOR");
+				throw new Exception("Pas de première expression dans les parenthèses FOR");
 			}
-			
+
 			if (lexer.next().getClasse() != Classe.TOK_POINT_VIRGULE) {
 				throw new Exception("E1 non suivi d'un POINT_VIRGULE");
 			}
@@ -208,8 +212,7 @@ public class Parser {
 			Arbre exp1 = expression();
 
 			if (exp1 == null) {
-				throw new Exception(
-						"Pas de deuxième expression dans les parenthèses FOR");
+				throw new Exception("Pas de deuxième expression dans les parenthèses FOR");
 			}
 
 			if (lexer.next().getClasse() != Classe.TOK_POINT_VIRGULE) {
@@ -219,8 +222,7 @@ public class Parser {
 			Arbre exp2 = affectation();
 
 			if (exp2 == null) {
-				throw new Exception(
-						"Pas de troisième expression dans les parenthèses FOR");
+				throw new Exception("Pas de troisième expression dans les parenthèses FOR");
 			}
 
 			if (lexer.next().getClasse() != Classe.TOK_PAR_FERM) {
@@ -272,7 +274,7 @@ public class Parser {
 
 		}
 
-		// while (E) I 
+		// while (E) I
 		if (lexer.look().getClasse() == Classe.TOK_WHILE) {
 			lexer.next(); // lexer sur le WHILE
 
@@ -282,8 +284,7 @@ public class Parser {
 
 			Arbre exp = expression();
 			if (exp == null) {
-				throw new Exception(
-						"Pas d'expression dans les parenthèses du WHILE");
+				throw new Exception("Pas d'expression dans les parenthèses du WHILE");
 			}
 
 			if (lexer.next().getClasse() != Classe.TOK_PAR_FERM) {
@@ -303,7 +304,7 @@ public class Parser {
 
 			enfantsDepthTwo.add(exp);
 			enfantsDepthTwo.add(ins);
-			
+
 			enfantsDepthTwo.add(new Arbre(nodeBreak, null));
 
 			Arbre arbreDepthTwo = new Arbre(nodeIf, enfantsDepthTwo);
@@ -317,19 +318,19 @@ public class Parser {
 
 			return new Arbre(nodeLoop, enfantsDepthOne);
 		}
-		
+
 		// return E;
 		if (lexer.look().getClasse() == Classe.TOK_RETURN) {
-			Arbre a1 =  expression();
-			
+			Arbre a1 = expression();
+
 			if (a1 == null) {
 				throw new Exception("RETURN non suivi d'un expression");
 			}
-					
+
 			if (lexer.next().getClasse() != Classe.TOK_POINT_VIRGULE) {
 				throw new Exception("Expression non suivie d'un POINT_VIRGULE");
 			}
-					
+
 			return a1;
 		}
 
@@ -337,48 +338,50 @@ public class Parser {
 	}
 
 	/**
-	 * Niveau primaire P <- ident | cst_int | (E)
+	 * Niveau primaire P <- ident | ident "(" E* ")"  | cst_int | (E)
 	 * 
 	 * 
 	 * @return Arbre
 	 * @throws Exception
 	 */
 	public Arbre primaire() throws Exception {
-
+		
 		if (lexer.look().getClasse() == Classe.TOK_IDENT) {
 			Token tok = lexer.next(); // sur ident
 			Noeud op = Noeud.tokenToNode(tok);
-			
+
 			// appel à une fonction
 			if (lexer.look().getClasse() == Classe.TOK_PAR_OUVR) {
 				lexer.next(); // lexer sur la parenthèse ouvrante
-				
+
 				Noeud call = new Noeud(Categorie.CALL);
-								
+
 				ArrayList<Arbre> enfants = new ArrayList<Arbre>();
-				
+
 				enfants.add(new Arbre(op, null));
 
 				Arbre e = expression();
 				if (e != null) {
 					enfants.add(e);
-					
-					while (lexer.next().getClasse() == Classe.TOK_VIRGULE) {
+
+					while (lexer.look().getClasse() == Classe.TOK_VIRGULE) {
+						lexer.next(); // on avance
 						enfants.add(expression());
 					}
-					
-					if (lexer.next().getClasse() != Classe.TOK_PAR_FERM) {
-						throw new Exception("Pas de parenthèse fermante");
-					}
+				}
+				
+				if (lexer.next().getClasse() != Classe.TOK_PAR_FERM) {
+					throw new Exception("Pas de parenthèse fermante");
 				}
 
 				return new Arbre(call, enfants);
 			}
-			
+
 			// variable
 			Symbole symbole = this.tableSymbole.chercher(tok.getChargeStr());
 			op.setPosition(symbole.getPosition());
 			
+
 			return new Arbre(op, null);
 		}
 
@@ -387,7 +390,7 @@ public class Parser {
 			Noeud op = Noeud.tokenToNode(tok);
 			return new Arbre(op, null);
 		}
-		
+
 		// Opposé : arbre comme pour la soustraction
 		// mais avec un seul enfant
 		if (lexer.look().getClasse() == Classe.TOK_SUB) {
@@ -396,8 +399,7 @@ public class Parser {
 			Arbre p = primaire();
 
 			if (p == null) {
-				throw new Exception(
-						"L'opposé n'a pas de valeur (IDENT manquant)");
+				throw new Exception("L'opposé n'a pas de valeur (IDENT manquant)");
 			}
 
 			ArrayList<Arbre> enfants = new ArrayList<Arbre>();
@@ -441,16 +443,14 @@ public class Parser {
 			return null;
 		}
 
-		if (lexer.look().getClasse() == Classe.TOK_MUL
-				|| lexer.look().getClasse() == Classe.TOK_DIV
+		if (lexer.look().getClasse() == Classe.TOK_MUL || lexer.look().getClasse() == Classe.TOK_DIV
 				|| lexer.look().getClasse() == Classe.TOK_MODULO) {
 			Token tok = lexer.next(); // sur opérateur arithmétique
 			Noeud op = Noeud.tokenToNode(tok);
 			Arbre a2 = multiplicatif();
 
 			if (a2 == null) {
-				throw new Exception(
-						"Il manque la deuxième partie de l'expression");
+				throw new Exception("Il manque la deuxième partie de l'expression");
 			}
 
 			ArrayList<Arbre> enfants = new ArrayList<Arbre>();
@@ -475,14 +475,12 @@ public class Parser {
 			return null;
 		}
 
-		if (lexer.look().getClasse() == Classe.TOK_ADD
-				|| lexer.look().getClasse() == Classe.TOK_SUB) {
+		if (lexer.look().getClasse() == Classe.TOK_ADD || lexer.look().getClasse() == Classe.TOK_SUB) {
 			Token tok = lexer.next(); // sur opérateur arithmétique
 			Noeud op = Noeud.tokenToNode(tok);
 			Arbre a2 = additif();
 			if (a2 == null) {
-				throw new Exception(
-						"Il manque la deuxième partie de l'expression");
+				throw new Exception("Il manque la deuxième partie de l'expression");
 			}
 
 			ArrayList<Arbre> enfants = new ArrayList<Arbre>();
@@ -508,18 +506,14 @@ public class Parser {
 			return null;
 		}
 
-		if (lexer.look().getClasse() == Classe.TOK_COMPARE
-				|| lexer.look().getClasse() == Classe.TOK_DIFF
-				|| lexer.look().getClasse() == Classe.TOK_INF
-				|| lexer.look().getClasse() == Classe.TOK_SUP
-				|| lexer.look().getClasse() == Classe.TOK_INF_EGAL
-				|| lexer.look().getClasse() == Classe.TOK_SUP_EGAL) {
+		if (lexer.look().getClasse() == Classe.TOK_COMPARE || lexer.look().getClasse() == Classe.TOK_DIFF
+				|| lexer.look().getClasse() == Classe.TOK_INF || lexer.look().getClasse() == Classe.TOK_SUP
+				|| lexer.look().getClasse() == Classe.TOK_INF_EGAL || lexer.look().getClasse() == Classe.TOK_SUP_EGAL) {
 			Token tok = lexer.next(); // sur opérateur de comparaison
 			Noeud op = Noeud.tokenToNode(tok);
 			Arbre a2 = comparatif();
 			if (a2 == null) {
-				throw new Exception(
-						"Il manque la deuxième partie de l'expression");
+				throw new Exception("Il manque la deuxième partie de l'expression");
 			}
 
 			ArrayList<Arbre> enfants = new ArrayList<Arbre>();
@@ -530,7 +524,7 @@ public class Parser {
 		}
 		return a1;
 	}
-	
+
 	/**
 	 * affectation ident = E
 	 * 
@@ -538,7 +532,7 @@ public class Parser {
 	 * @throws Exception
 	 */
 	public Arbre affectation() throws Exception {
-		
+
 		// Ident = E;
 		if (lexer.look().getClasse() == Classe.TOK_IDENT) {
 
@@ -550,7 +544,8 @@ public class Parser {
 			Arbre en1 = new Arbre(opIdent, null);
 
 			if (lexer.look().getClasse() != Classe.TOK_EGAL) {
-				throw new Exception("IDENT non suivie d'un EGAL");
+				throw new Exception(
+						"IDENT non suivie d'un EGAL (<" + lexer.look().getClasse() + ">)");
 			}
 			Token tok = lexer.next(); // sur =
 			Noeud op = Noeud.tokenToNode(tok);
@@ -563,16 +558,15 @@ public class Parser {
 
 			Symbole symbole = this.tableSymbole.chercher(en1.getNoeud().getStrValue());
 			en1.getNoeud().setPosition(symbole.getPosition());
-			
+
 			enfants.add(en1);
 			enfants.add(en2);
 
 			return new Arbre(op, enfants);
 		}
-				
+
 		// TODO : à finir => ajouter +=, -=, etc.
-		
-		
+
 		return null;
 	}
 
@@ -587,58 +581,153 @@ public class Parser {
 	}
 
 	/**
-	 * Niveau X <- I
-	 * Noeud racine
+	 * Niveau fonction F <- Type IDENT "(" Args ")" I Création d'une fonction
+	 * 
+	 * @return Arbre
+	 * @throws Exception
+	 */
+	public Arbre fonction() throws Exception {
+
+		if (lexer.look().getClasse() != Classe.TOK_INT && lexer.look().getClasse() != Classe.TOK_STR) {
+			throw new Exception(
+					"Une fonction doit commencer par le type de retour (<" + lexer.look().getClasse() + ">)");
+		}
+
+		this.nvar = 0;
+		this.narg = 0;
+
+		this.tableSymbole = new TableDeSymbole();
+		
+		// nouvelle portée local pour les variables => table vide
+		this.tableSymbole.push();
+
+		ArrayList<Arbre> enfantsFct = new ArrayList<Arbre>();
+
+		// -------- récupération du type ------- //
+		Token tokType = lexer.next(); // sur int ou str
+		Noeud type = Noeud.tokenToNode(tokType);
+
+		enfantsFct.add(new Arbre(type, null));
+
+		if (lexer.look().getClasse() != Classe.TOK_IDENT) {
+			throw new Exception("Une fonction doit avoir un nom (<" + lexer.look().getClasse() + ">)");
+		}
+
+		// -------- récupération de l'ident ------- //
+		Token tokIdent = lexer.next(); // sur ident
+		Noeud ident = Noeud.tokenToNode(tokIdent);
+
+		enfantsFct.add(new Arbre(ident, null));
+
+		if (lexer.next().getClasse() != Classe.TOK_PAR_OUVR) {
+			throw new Exception("Un nom de fonction doit être suivi d'une parenthèse ouvrante (<"
+					+ lexer.look().getClasse() + ">)");
+		}
+
+		// si pas de parenthèse fermante on est dans liste des arguments
+		if (lexer.look().getClasse() != Classe.TOK_PAR_FERM) {
+			
+			// ------ récupération des arguments ------//
+			Token tokArg = lexer.next(); // sur 1er argument
+			
+			if (tokArg.getClasse() != Classe.TOK_IDENT) {
+				throw new Exception("Le paramètre de la fonction doit être un IDENT (<"
+						+ tokArg.getClasse() + ">)");
+			}			
+			
+			Noeud nodeArg = Noeud.tokenToNode(tokArg);
+
+			Symbole symbole = this.tableSymbole.definir(nodeArg.getStrValue());
+			symbole.setPosition(this.narg);
+			Symbole.setTypeSymbole(nodeArg, symbole);
+
+			this.narg++;
+
+			Noeud args = new Noeud(Categorie.ARGS);
+
+			ArrayList<Arbre> enfantsArg = new ArrayList<Arbre>();
+
+			enfantsArg.add(new Arbre(nodeArg, null));
+
+			while (lexer.look().getClasse() == Classe.TOK_VIRGULE) {
+				lexer.next(); // lexer sur la virgule
+				tokArg = lexer.next(); // sur 1er argument
+				
+				if (tokArg.getClasse() != Classe.TOK_IDENT) {
+					throw new Exception("Le paramètre de la fonction doit être un IDENT (<"
+							+ tokArg.getClasse() + ">)");
+				}
+				
+				nodeArg = Noeud.tokenToNode(tokArg);
+
+				symbole = this.tableSymbole.definir(nodeArg.getStrValue());
+				symbole.setPosition(this.narg);
+				Symbole.setTypeSymbole(nodeArg, symbole);
+
+				enfantsArg.add(new Arbre(nodeArg, null));
+				this.narg++;
+			}
+
+			Arbre arbreArgs = new Arbre(args, enfantsArg);
+			enfantsFct.add(arbreArgs);
+			args.setIntValue(this.narg);
+		}
+		
+
+		this.nvar = this.narg;
+
+		if (lexer.next().getClasse() != Classe.TOK_PAR_FERM) {
+			throw new Exception("Pas de parenthèse fermante (<"
+					+ lexer.look().getClasse() + ">)");
+		}
+
+		// ------ récupération de l'instruction ------//
+		// corps de la fonction (BLOCK)
+		Arbre instruction = instruction();
+		enfantsFct.add(instruction);
+
+		// ------ création du noeud function ------//
+		Noeud function = new Noeud(Categorie.FUNCTION);
+
+		// on met le nombre total de variables dans le programme
+		function.setIntValue(this.nvar);
+
+		// fin portée local pour les variables
+		this.tableSymbole.pop();
+
+		return new Arbre(function, enfantsFct);
+
+	}
+
+	/**
+	 * Niveau X <- I Noeud racine
 	 * 
 	 * @return Arbre
 	 * @throws Exception
 	 */
 	public Arbre racine() throws Exception {
-		if (lexer.next().getClasse() != Classe.TOK_ACC_OUVR) {
-			throw new Exception(
-					"Il manque l'accolade de début de programme");
-		}
-		
-		this.nvar = 0;
-		
-		this.tableSymbole = new TableDeSymbole();
-		// nouvelle portée globale pour les variables => table vide
-		this.tableSymbole.push();
-		
+
 		ArrayList<Arbre> enfant = new ArrayList<Arbre>();
-		// TODO : à modifier quand grammaire OK
-		// FIXME : le problème ici est que l'on boucle sur Classe.TOK_ACC_FERM,
-		// la dernière accolade du programme. Ce qui est normale puisque dans
-		// instruction on n'utilise pas expression et donc il ne connait pas ce token
-		// et donc n'avance pas quand il est dessus
-		// ou alors il faudrait avancer le token même quand il ne le connait pas
-		// A VOIR : peut-être corrigé en changeant la grammaire
+
+		Arbre main = fonction();
+
+		if (!"main".equalsIgnoreCase(main.getEnfants().get(1).getNoeud().getStrValue())) {
+			throw new Exception(
+					"La fonction principale doit s'appeler 'main' (<" + main.getEnfants().get(1).getNoeud().getStrValue() + ">)");
+		}
+		enfant.add(main);
+		
 		int i = 0;
-		while(lexer.look().getClasse() != Classe.TOK_EOF) {
+		while (lexer.look().getClasse() != Classe.TOK_EOF) {
 			i++;
-			if (i==10000) {
+			if (i == 10000) {
 				throw new Exception("boucle infinie");
 			}
-			
-			enfant.add(instruction());
-			if (lexer.look().getClasse() == Classe.TOK_ACC_FERM) {
-				break;
-			}
-//			enfant.add(expression());
+			enfant.add(fonction());
 		}
-		
+
 		Noeud racine = new Noeud(Categorie.RACINE);
-		// on met le nombre total de variables dans le programme
-		racine.setIntValue(this.nvar);
-		
-		if (lexer.next().getClasse() != Classe.TOK_ACC_FERM) {
-			throw new Exception(
-					"Il manque l'accolade de fin de programme");
-		}
-		
-		// fin portée globale pour les variables
-		this.tableSymbole.pop();
-			
+
 		return new Arbre(racine, enfant);
 	}
 }
