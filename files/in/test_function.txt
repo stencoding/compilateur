@@ -1,0 +1,13 @@
+int main() {
+	var x : int;
+	var y : int;
+	var z : int;
+	x=7;
+	y=8;
+	z = toto(x, y);
+}
+
+int toto(a, b) {
+	var z : int;
+	z = a+b;
+}
