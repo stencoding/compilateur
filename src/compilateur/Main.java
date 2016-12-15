@@ -56,6 +56,7 @@ public class Main {
 			// SI ON A LE TPS : 
 			//       +=,-=, ...
 			//       tableaux
+			// nettoyer code
 
 		} catch (Exception e) {
 			System.out.println("Erreur : "+ e.getMessage() + " stacktrace : " + Arrays.toString(e.getStackTrace()));
