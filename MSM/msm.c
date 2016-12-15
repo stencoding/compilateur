@@ -32,6 +32,10 @@
 
 #define N (1 << 16)
 
+#define swap(a, b, t) do {         \
+	t tmp = a; a = b; b = tmp; \
+} while (0)
+
 static
 void error(int lno, const char *msg, ...) {
 	va_list args;
@@ -48,12 +52,13 @@ typedef union {
 	int   i;
 	float f;
 } mem_t;
-static mem_t mem[N];
+static mem_t mem[N], rs;
 static int   pc, sp, bp;
 
 enum {
 	op_halt,
-	op_pushi,  op_pushf,  op_get,    op_set,
+	op_drop,   op_dup,    op_pushi,  op_pushf,
+	op_get,    op_set,    op_read,   op_write,
 	op_addi,   op_subi,   op_muli,   op_divi,
 	op_modi,   op_addf,   op_subf,   op_mulf,
 	op_divf,   op_not,    op_and,    op_or,
@@ -61,14 +66,16 @@ enum {
 	op_cmplti, op_cmplei, op_cmpgti, op_cmpgei,
 	op_cmpeqf, op_cmpnef, op_cmpltf, op_cmplef,
 	op_cmpgtf, op_cmpgef, op_jump,   op_jumpt,
-	op_jumpf,  op_outi,   op_outf,   op_outc
+	op_jumpf,  op_prep,   op_call,   op_ret,
+	op_outi,   op_outf,   op_outc
 };
 struct {
 	char *name;
 	int   type;
 } static const opd[] = {
 	{"halt",    0},
-	{"push.i",  1}, {"push.f",  2}, {"get",     1}, {"set",     1},
+	{"drop",    0}, {"dup",     0}, {"push.i",  1}, {"push.f",  2},
+	{"get",     1}, {"set",     1}, {"read",    0}, {"write",   0},
 	{"add.i",   0}, {"sub.i",   0}, {"mul.i",   0}, {"div.i",   0},
 	{"mod.i",   0}, {"add.f",   0}, {"sub.f",   0}, {"mul.f",   0},
 	{"div.f",   0}, {"not",     0}, {"and",     0}, {"or",      0},
@@ -76,7 +83,8 @@ struct {
 	{"cmplt.i", 0}, {"cmple.i", 0}, {"cmpgt.i", 0}, {"cmpge.i", 0},
 	{"cmpeq.f", 0}, {"cmpne.f", 0}, {"cmplt.f", 0}, {"cmple.f", 0},
 	{"cmpgt.f", 0}, {"cmpge.f", 0}, {"jump",    3}, {"jumpt",   3},
-	{"jumpf",   3}, {"out.i",   0}, {"out.f",   0}, {"out.c",   0},
+	{"jumpf",   3}, {"prep",    3}, {"call",    1}, {"ret",     0},
+	{"out.i",   0}, {"out.f",   0}, {"out.c",   0},
 	{0, 0}
 };
 
@@ -165,6 +173,7 @@ int main(int argc, char *argv[]) {
 			}
 		}
 	} while (0);
+	mem[0].i = pc;
 	do {
 		lbl_t *l;
 		for (l = lbl; l != 0; l = l->next) {
@@ -185,7 +194,7 @@ int main(int argc, char *argv[]) {
 		const int opc = mem[pc++].i;
 		if (dbg) {
 			if (dbg > 1) {
-				printf("\n");
+				printf("\nBP=%d\n", bp);
 				for (i = N - 1; i >= sp; i--)
 					printf("  STK[%d] = %d\n", i, mem[i].i);
 			}
@@ -199,10 +208,14 @@ int main(int argc, char *argv[]) {
 		}
 		switch (opc) {
 		case op_halt:   goto halt;
+		case op_drop:   sp++;                                     break;
+		case op_dup:    mem[--sp] = mem[tp];                      break;
 		case op_pushi:  mem[--sp].i = mem[pc++].i;                break;
 		case op_pushf:  mem[--sp].f = mem[pc++].f;                break;
 		case op_get:    mem[--sp] = mem[bp - mem[pc++].i - 1];    break;
 		case op_set:    mem[bp - mem[pc++].i - 1] = mem[sp++];    break;
+		case op_read:   mem[tp] = mem[mem[tp].i];                 break;
+		case op_write:  mem[mem[nx].i] = mem[tp]; sp += 2;        break;
 		case op_addi:   mem[nx].i = mem[nx].i +  mem[tp].i; sp++; break;
 		case op_subi:   mem[nx].i = mem[nx].i -  mem[tp].i; sp++; break;
 		case op_muli:   mem[nx].i = mem[nx].i *  mem[tp].i; sp++; break;
@@ -232,6 +245,12 @@ int main(int argc, char *argv[]) {
 		case op_jump:   pc =                 mem[pc].i;           break;
 		case op_jumpt:  pc = ( mem[sp++].i ? mem[pc].i : pc+1);   break;
 		case op_jumpf:  pc = (!mem[sp++].i ? mem[pc].i : pc+1);   break;
+		case op_prep:   mem[--sp].i = mem[pc++].i;
+				mem[--sp].i = bp;                         break;
+		case op_call:   bp = sp + mem[pc++].i;
+		                swap(mem[bp+1].i, pc, int);               break;
+		case op_ret:    pc = mem[bp+1].i; mem[bp+1] = mem[sp];
+				sp = bp; bp = mem[sp++].i;                break;
 		case op_outi:   printf("%d", mem[sp++].i);                break;
 		case op_outf:   printf("%f", mem[sp++].f);                break;
 		case op_outc:   printf("%c", mem[sp++].i);                break;
