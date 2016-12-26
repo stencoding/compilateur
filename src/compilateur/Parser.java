@@ -17,6 +17,7 @@ public class Parser {
 
 	private int nvar;
 	private int narg;
+	private boolean returnOk;
 	private Lexer lexer;
 	private TableDeSymbole tableSymbole;
 
@@ -28,6 +29,7 @@ public class Parser {
 	 */
 	public Parser(Lexer lexer) throws Exception {
 		this.lexer = lexer;
+		this.returnOk = false;
 	}
 
 	public void affichageParser() throws Exception {
@@ -329,10 +331,29 @@ public class Parser {
 			if (lexer.next().getClasse() != Classe.TOK_POINT_VIRGULE) {
 				throw new Exception("Expression non suivie d'un POINT_VIRGULE");
 			}
-
+			returnOk = true;
 			return a1;
 		}
+		
+		// echo E;
+		if (lexer.look().getClasse() == Classe.TOK_ECHO) {
+			lexer.next(); // lexer sur le echo
+			Arbre a1 = expression();
 
+			if (a1 == null) {
+				throw new Exception("ECHO non suivi d'un expression");
+			}
+
+			if (lexer.next().getClasse() != Classe.TOK_POINT_VIRGULE) {
+				throw new Exception("Expression non suivie d'un POINT_VIRGULE");
+			}
+			Noeud nodeEcho = new Noeud(Categorie.ECHO);
+			nodeEcho.setStrValue(a1.getNoeud().getStrValue());
+			nodeEcho.setPosition(a1.getNoeud().getPosition());
+			Arbre arbre = new Arbre(nodeEcho, null);
+			return arbre;
+		}
+		
 		return null;
 	}
 
@@ -592,7 +613,7 @@ public class Parser {
 			throw new Exception(
 					"Une fonction doit commencer par le type de retour (<" + lexer.look().getClasse() + ">)");
 		}
-
+		
 		this.nvar = 0;
 		this.narg = 0;
 
@@ -691,6 +712,7 @@ public class Parser {
 
 		// on met le nombre total de variables dans le programme
 		function.setIntValue(this.nvar);
+		function.setStrValue(tokIdent.getChargeStr());
 
 		// fin portée local pour les variables
 		this.tableSymbole.pop();
@@ -723,7 +745,12 @@ public class Parser {
 			if (i == 10000) {
 				throw new Exception("boucle infinie");
 			}
-			enfant.add(fonction());
+			Arbre fonction = fonction();
+			enfant.add(fonction);
+			if(!returnOk) {
+				throw new Exception("La fonction " +fonction.getNoeud().getStrValue() + " doit finir par un return");
+			}
+			returnOk = false;
 		}
 
 		Noeud racine = new Noeud(Categorie.RACINE);

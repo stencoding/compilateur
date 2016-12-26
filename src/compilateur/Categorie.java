@@ -28,6 +28,8 @@ public enum Categorie {
 	CALL,
 	FUNCTION,
 	ARGS,
+	ECHO,
+	RETURN,
 	// Type de variable
 	INT,
 	STR,

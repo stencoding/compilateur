@@ -32,6 +32,7 @@ public enum Classe {
 	TOK_LOOP,
 	TOK_BREAK,
 	TOK_RETURN,
+	TOK_ECHO,
 	// Type de variable
 	TOK_INT,
 	TOK_STR,

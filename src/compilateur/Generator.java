@@ -32,8 +32,8 @@ public class Generator {
 //			Arbre.affiche(this.parser.racine(), 0);
 
 			generateCode(this.parser.racine());
-			
-			writeLine("halt");
+//			
+//			writeLine("halt");
 			
 			this.fichier.close();
 			
@@ -49,28 +49,45 @@ public class Generator {
 	}
 	
 	public void generateCode(Arbre arbre) throws IOException {
-//		System.out.println(arbre.getNoeud().getCategorie());
 		switch (arbre.getNoeud().getCategorie()) {
 			case RACINE:
-				this.fichier.write(".start");
-				writeLine("jump main");
-				// boucle sur chaque enfant sous la racine
 				int nbEnfants = arbre.getEnfants().size();
-				for(int i = 0; i < nbEnfants ; i++) {
+				this.fichier.write(".start");
+				if(nbEnfants > 0) {
+					generateCode(arbre.getEnfants().get(0));
+				}
+				writeLine("halt");
+				
+				// on commence à partir du deuxième enfant : première fonction après le main
+				for(int i = 1; i < nbEnfants ; i++) {
 					generateCode(arbre.getEnfants().get(i));
 				}
+				// boucle sur chaque enfant sous la racine
 				break;
 			case FUNCTION:
-				writeLine("." + arbre.getEnfants().get(1).getNoeud().getStrValue());
+				if(!arbre.getEnfants().get(1).getNoeud().getStrValue().equalsIgnoreCase("main")) {
+					writeLineWithoutTab("." + arbre.getEnfants().get(1).getNoeud().getStrValue());					
+				}
 								
 				// on créé les cases mémoires pour toutes les variables du programme
-				for(int i = 0; i < arbre.getNoeud().getIntValue() - arbre.getEnfants().get(2).getNoeud().getIntValue() ; i++) {
-					writeLine("push.i", 0);
+				if(arbre.getNoeud().getIntValue() - arbre.getEnfants().get(2).getNoeud().getIntValue() > 0) {
+					writeLine("; declaration variable");
+					for(int i = 0; i < arbre.getNoeud().getIntValue() - arbre.getEnfants().get(2).getNoeud().getIntValue() ; i++) {	
+						writeLine("push.i", 0);
+					}
 				}
 				
 				generateCode(arbre.getEnfants().get(3));
-				writeLine("push.i", 0);
-//				writeLine("ret");
+				if(arbre.getEnfants().get(1).getNoeud().getStrValue().equalsIgnoreCase("main")) {
+					writeLine("ret");
+				}
+				else {
+					// ret dans toutes les fonctions sauf le main car on oblige l'utilisateur à mettre un return
+					writeLine("ret");
+					writeLine("; return par defaut");
+					writeLine("push.i", 0);
+					writeLine("ret");
+				}
 								
 				break;
 			case BLOCK:
@@ -79,10 +96,13 @@ public class Generator {
 					generateCode(arbre.getEnfants().get(i));
 				}								
 				break;
+			case ECHO:
+				writeLine("get", arbre.getNoeud().getPosition());
+				writeLine("out.i");
+				break;
 			case CALL:
 				writeLine("prep", arbre.getEnfants().get(0).getNoeud().getStrValue());	
-				for(int i = 0 ; i < arbre.getNoeud().getIntValue() ; i++)
-				{
+				for(int i = 0 ; i < arbre.getNoeud().getIntValue() ; i++) {
 					generateCode(arbre.getEnfants().get(i+1));
 				}
 				writeLine("call", arbre.getNoeud().getIntValue());
@@ -94,10 +114,10 @@ public class Generator {
 				if(arbre.getEnfants().get(1).getNoeud().getCategorie() != Categorie.IDENT) {
 					generateCode(arbre.getEnfants().get(1));
 				}
-				writeLine("set", arbre.getEnfants().get(0).getNoeud().getPosition());
+				writeLine("set", arbre.getEnfants().get(0).getNoeud().getPosition(), arbre.getEnfants().get(0).getNoeud().getStrValue());
 				break;
 			case IDENT:
-				writeLine("get", arbre.getNoeud().getPosition());
+				writeLine("get", arbre.getNoeud().getPosition(), arbre.getNoeud().getStrValue());
 				break;
 			case CST_INT:
 				writeLine("push.i", arbre.getNoeud().getIntValue());
@@ -164,6 +184,22 @@ public class Generator {
 	public void writeLine(String instruction, String value) throws IOException {
 		this.fichier.newLine();
 		this.fichier.write("\t" + instruction + " " + value);
+	}
+	
+	public void writeLine(String instruction, String value, String commentaire) throws IOException {
+		this.fichier.newLine();
+		this.fichier.write("\t" + instruction + " " + value + " ; " + commentaire);
+	}
+
+	public void writeLine(String instruction, int value, String commentaire) throws IOException {
+		this.fichier.newLine();
+		this.fichier.write("\t" + instruction + " " + value + " ; " + commentaire);
+	}
+	
+	public void writeLineWithoutTab(String label) throws IOException {
+		this.fichier.newLine();
+		this.fichier.write(label);
+		
 	}
 
 }

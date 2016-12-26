@@ -85,8 +85,6 @@ public class Arbre {
 		System.out.println("\"" + arbre.getNoeud().getCategorie() + "\"" + ": {");
 		// FIXME : si on sépare la valeur d'un noeud en 2 (Int et Str 
 		// comme pour Token (cf classe Noeud)
-//		System.out.println("\"chargeInt\" : " + "\"" + arbre.getNoeud().getChargeInt() + "\",");
-//		System.out.println("\"chargeStr\" : " + "\"" + arbre.getNoeud().getChargeStr() + "\",");
 		
 		if (arbre.enfants == null) {
 			System.out.println("}");
@@ -103,16 +101,4 @@ public class Arbre {
 
 		return;
 	}
-	
-
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 * 
-	 * TODO : finir affichage
-	 */
-//	@Override
-//	public String toString() {
-//		return this.affiche(this, 0);
-//	}
-
 }

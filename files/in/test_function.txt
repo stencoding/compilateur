@@ -5,13 +5,18 @@ int main() {
 	x=5;
 	y=3;
 	z = toto(x, y);
+	echo z;
 	return tata();
 }
 
 int tata() {
-	return 0;
+	var z : int;
+	z = 2;
+	return 2;
 }
 
 int toto(a, b) {
-	return a*b;
+	var z : int;
+	z = a*b;
+	return z;
 }
