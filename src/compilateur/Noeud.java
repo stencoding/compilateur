@@ -70,6 +70,9 @@ public class Noeud {
 				categorie = Categorie.EGAL;
 				break;
 			// Mots-clés
+			case TOK_IF:
+				categorie = Categorie.IF;
+				break;
 			case TOK_VAR:
 				categorie = Categorie.VAR;
 				break;

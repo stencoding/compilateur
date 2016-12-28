@@ -50,6 +50,7 @@ public class Generator {
 	
 	public void generateCode(Arbre arbre) throws IOException {
 		switch (arbre.getNoeud().getCategorie()) {
+		
 			case RACINE:
 				int nbEnfants = arbre.getEnfants().size();
 				this.fichier.write(".start");
@@ -64,6 +65,7 @@ public class Generator {
 				}
 				// boucle sur chaque enfant sous la racine
 				break;
+				
 			case FUNCTION:
 				if(!arbre.getEnfants().get(1).getNoeud().getStrValue().equalsIgnoreCase("main")) {
 					writeLineWithoutTab("." + arbre.getEnfants().get(1).getNoeud().getStrValue());					
@@ -88,45 +90,109 @@ public class Generator {
 					writeLine("push.i", 0);
 					writeLine("ret");
 				}
-								
 				break;
+				
 			case BLOCK:
 				// boucle sur chaque enfant sous block
 				for(int i = 0; i < arbre.getEnfants().size() ; i++) {
 					generateCode(arbre.getEnfants().get(i));
-				}								
+				}
 				break;
+				
+			case SEQ:
+				generateCode(arbre.getEnfants().get(0));
+				generateCode(arbre.getEnfants().get(1));
+				break;
+				
+			case LOOP:
+				generateCode(arbre.getEnfants().get(0));
+				generateCode(arbre.getEnfants().get(1));
+				break;
+				
 			case ECHO:
 				writeLine("get", arbre.getNoeud().getPosition());
 				writeLine("out.i");
 				break;
+				
 			case CALL:
-				writeLine("prep", arbre.getEnfants().get(0).getNoeud().getStrValue());	
+				writeLine("prep", arbre.getEnfants().get(0).getNoeud().getStrValue());
 				for(int i = 0 ; i < arbre.getNoeud().getIntValue() ; i++) {
 					generateCode(arbre.getEnfants().get(i+1));
 				}
 				writeLine("call", arbre.getNoeud().getIntValue());
 				break;
-			case EGAL:
-				if(arbre.getEnfants().get(0).getNoeud().getCategorie() != Categorie.IDENT) {
-					generateCode(arbre.getEnfants().get(0));	
+			
+			case IF:
+				// on génère le code de la condition
+				if(arbre.getEnfants().get(0).getNoeud().getCategorie() != Categorie.IDENT) {// peut-être inutile
+					generateCode(arbre.getEnfants().get(0));
+					writeLine("jumpf", "else_" + arbre.getEnfants().get(0).getNoeud().getIntValue());
 				}
-				if(arbre.getEnfants().get(1).getNoeud().getCategorie() != Categorie.IDENT) {
+				// génère le code du if
+				if(arbre.getEnfants().get(1).getNoeud().getCategorie() != Categorie.IDENT) {// peut-être inutile
 					generateCode(arbre.getEnfants().get(1));
+					writeLine("jump", "end_if_" + arbre.getEnfants().get(0).getNoeud().getIntValue());
 				}
+				// génère le code du else
+				writeLineWithoutTab(".else_" + arbre.getEnfants().get(0).getNoeud().getIntValue());
+				if(arbre.getEnfants().size() > 2 && arbre.getEnfants().get(2).getNoeud().getCategorie() != Categorie.IDENT) {// peut-être inutile
+					generateCode(arbre.getEnfants().get(2));
+				}
+				
+				// label de fin
+				writeLineWithoutTab(".end_if_" + arbre.getEnfants().get(0).getNoeud().getIntValue());
+				
+				break;
+			
+			case COMPARE:
+				generateCodeForTwoChildren(arbre);
+				writeLine("cmpeq.i");
+				break;
+				
+			case DIFF:
+				generateCodeForTwoChildren(arbre);
+				writeLine("cmpne.i");
+				break;
+				
+			case INF:
+				generateCodeForTwoChildren(arbre);
+				writeLine("cmplt.i");
+				break;
+				
+			case INF_EGAL:
+				generateCodeForTwoChildren(arbre);
+				writeLine("cmple.i");
+				break;
+				
+			case SUP:
+				generateCodeForTwoChildren(arbre);
+				writeLine("cmpgt.i");
+				break;
+				
+			case SUP_EGAL:
+				generateCodeForTwoChildren(arbre);
+				writeLine("cmpge.i");
+				break;
+				
+			case EGAL:
+				generateCodeForTwoChildren(arbre);
 				writeLine("set", arbre.getEnfants().get(0).getNoeud().getPosition(), arbre.getEnfants().get(0).getNoeud().getStrValue());
 				break;
+				
 			case IDENT:
 				writeLine("get", arbre.getNoeud().getPosition(), arbre.getNoeud().getStrValue());
 				break;
+				
 			case CST_INT:
 				writeLine("push.i", arbre.getNoeud().getIntValue());
 				break;
+				
 			case ADD:
 				generateCode(arbre.getEnfants().get(0));	
 				generateCode(arbre.getEnfants().get(1));
 				writeLine("add.i");
 				break;
+				
 			case MUL:
 				generateCode(arbre.getEnfants().get(0));
 				generateCode(arbre.getEnfants().get(1));
@@ -135,6 +201,15 @@ public class Generator {
 	
 			default:
 				break;
+		}
+	}
+	
+	public void generateCodeForTwoChildren(Arbre arbre) throws IOException {
+		if(arbre.getEnfants().get(0).getNoeud().getCategorie() != Categorie.IDENT) {
+			generateCode(arbre.getEnfants().get(0));
+		}
+		if(arbre.getEnfants().get(1).getNoeud().getCategorie() != Categorie.IDENT) {
+			generateCode(arbre.getEnfants().get(1));
 		}
 	}
 	

@@ -1,10 +1,12 @@
-{
+int main() {
 	var i : int;
-	for(i=0;i<0;i=i+1) {
-		var x : int;
+	var x : int;
+	var y : int;
+	x=5;
+	y=3;
+	for(i=0;i<2;i=i+1) {
 		x=x+1;
-		var y : int;
 		y=y-1;
-		x=-x;
 	}
+	x=-x;
 }

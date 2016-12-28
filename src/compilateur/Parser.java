@@ -17,6 +17,7 @@ public class Parser {
 
 	private int nvar;
 	private int narg;
+	private int nlabel;
 	private boolean returnOk;
 	private Lexer lexer;
 	private TableDeSymbole tableSymbole;
@@ -116,6 +117,8 @@ public class Parser {
 
 			Token tok = lexer.next(); // sur if
 			Noeud op = Noeud.tokenToNode(tok);
+			op.setIntValue(this.nlabel);
+			this.nlabel++;
 
 			if (lexer.look().getClasse() != Classe.TOK_PAR_OUVR) {
 				throw new Exception("IF non suivi d'une PAR_OUVR");
@@ -616,6 +619,7 @@ public class Parser {
 		
 		this.nvar = 0;
 		this.narg = 0;
+		this.nlabel = 0;
 
 		this.tableSymbole = new TableDeSymbole();
 		
