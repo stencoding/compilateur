@@ -22,9 +22,8 @@ public class Main {
 //			Lexer lexer2 = new Lexer("./files/in/test_multi_var.txt");
 			
 			// test condition :
-			// OK pour le if
-			// reste while à faire
-			// faire aussi le noeud sub avec add.i de - arbre.getNoeud().getIntValue()
+			// OK
+			// TODO : faire aussi le noeud sub avec add.i de - arbre.getNoeud().getIntValue()
 			Lexer lexer = new Lexer("./files/in/test_if-else.txt");			
 			Lexer lexer2 = new Lexer("./files/in/test_if-else.txt");
 			
