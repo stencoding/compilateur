@@ -2,10 +2,13 @@ int main() {
 	var x : int;
 	x=2;
 	if(x<3) {
-		x=x+5;
+		x=5;
 	} else {
-		x=x+8;
+		x=8;
 	}
 	echo x;
+	var y : int;
+	y = 8+x-5*2;
+	echo y;
 	return x;
 }

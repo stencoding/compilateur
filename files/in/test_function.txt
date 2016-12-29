@@ -5,7 +5,7 @@ int main() {
 	x=5;
 	y=3;
 	z = toto(x, y);
-	echo z;
+	echo y;
 	return tata();
 }
 

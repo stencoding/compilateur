@@ -10,8 +10,8 @@ public class Main {
 			// TESTS POUR LE LEXER
 //			Lexer lexer = new Lexer("./files/in/general.txt");
 			// test_exp OK
-			Lexer lexer = new Lexer("./files/in/test_exp.txt");
-			Lexer lexer2 = new Lexer("./files/in/test_exp.txt");
+//			Lexer lexer = new Lexer("./files/in/test_exp.txt");
+//			Lexer lexer2 = new Lexer("./files/in/test_exp.txt");
 			
 			// test_var OK
 //			Lexer lexer = new Lexer("./files/in/test_var.txt");
@@ -24,8 +24,8 @@ public class Main {
 			// test condition :
 			// OK
 			// TODO : faire aussi le noeud sub avec add.i de - arbre.getNoeud().getIntValue()
-//			Lexer lexer = new Lexer("./files/in/test_if-else.txt");			
-//			Lexer lexer2 = new Lexer("./files/in/test_if-else.txt");
+			Lexer lexer = new Lexer("./files/in/test_if-else.txt");			
+			Lexer lexer2 = new Lexer("./files/in/test_if-else.txt");
 			
 			// test boucle TODO
 //			Lexer lexer = new Lexer("./files/in/test_for.txt");			

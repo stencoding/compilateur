@@ -2,41 +2,31 @@
 	; declaration variable 
 	push.i 0
 	push.i 0
-	push.i 0
+	push.i 2
+	set 0 ; x
+	get 0 ; x
+	push.i 3
+	cmplt.i 
+	jumpf else_0
 	push.i 5
 	set 0 ; x
-	push.i 3
-	set 1 ; y
-	prep toto
-	get 0 ; x
-	get 1 ; y
-	call 2
-	set 2 ; z
-	get 2
+	jump end_if_0
+.else_0
+	push.i 8
+	set 0 ; x
+.end_if_0
+	get 0
 	out.i 
-	prep tata
-	call 0
+	push.i 8
+	get 0 ; x
+	push.i 5
+	push.i 2
+	mul.i 
+	sub.i 
+	add.i 
+	set 1 ; y
+	get 1
+	out.i 
+	get 0 ; x
 	ret 
 	halt 
-.tata
-	; declaration variable 
-	push.i 0
-	push.i 2
-	set 0 ; z
-	push.i 2
-	ret 
-	; return par defaut 
-	push.i 0
-	ret 
-.toto
-	; declaration variable 
-	push.i 0
-	get 0 ; a
-	get 1 ; b
-	mul.i 
-	set 2 ; z
-	get 2 ; z
-	ret 
-	; return par defaut 
-	push.i 0
-	ret 
