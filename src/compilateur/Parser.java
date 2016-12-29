@@ -350,9 +350,11 @@ public class Parser {
 			if (lexer.next().getClasse() != Classe.TOK_POINT_VIRGULE) {
 				throw new Exception("Expression non suivie d'un POINT_VIRGULE");
 			}
+			
 			Noeud nodeEcho = new Noeud(Categorie.ECHO);
 			nodeEcho.setStrValue(a1.getNoeud().getStrValue());
 			nodeEcho.setPosition(a1.getNoeud().getPosition());
+			
 			Arbre arbre = new Arbre(nodeEcho, null);
 			return arbre;
 		}

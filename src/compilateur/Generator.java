@@ -70,8 +70,8 @@ public class Generator {
 				if(!arbre.getEnfants().get(1).getNoeud().getStrValue().equalsIgnoreCase("main")) {
 					writeLineWithoutTab("." + arbre.getEnfants().get(1).getNoeud().getStrValue());					
 				}
-								
-				// on créé les cases mémoires pour toutes les variables du programme
+				
+				// on crée les cases mémoires pour toutes les variables du programme
 				if(arbre.getNoeud().getIntValue() - arbre.getEnfants().get(2).getNoeud().getIntValue() > 0) {
 					writeLine("; declaration variable");
 					for(int i = 0; i < arbre.getNoeud().getIntValue() - arbre.getEnfants().get(2).getNoeud().getIntValue() ; i++) {	
@@ -124,18 +124,14 @@ public class Generator {
 			
 			case IF:
 				// on génère le code de la condition
-				if(arbre.getEnfants().get(0).getNoeud().getCategorie() != Categorie.IDENT) {// peut-être inutile
-					generateCode(arbre.getEnfants().get(0));
-					writeLine("jumpf", "else_" + arbre.getEnfants().get(0).getNoeud().getIntValue());
-				}
+				generateCode(arbre.getEnfants().get(0));
+				writeLine("jumpf", "else_" + arbre.getEnfants().get(0).getNoeud().getIntValue());
 				// génère le code du if
-				if(arbre.getEnfants().get(1).getNoeud().getCategorie() != Categorie.IDENT) {// peut-être inutile
-					generateCode(arbre.getEnfants().get(1));
-					writeLine("jump", "end_if_" + arbre.getEnfants().get(0).getNoeud().getIntValue());
-				}
+				generateCode(arbre.getEnfants().get(1));
+				writeLine("jump", "end_if_" + arbre.getEnfants().get(0).getNoeud().getIntValue());
 				// génère le code du else
 				writeLineWithoutTab(".else_" + arbre.getEnfants().get(0).getNoeud().getIntValue());
-				if(arbre.getEnfants().size() > 2 && arbre.getEnfants().get(2).getNoeud().getCategorie() != Categorie.IDENT) {// peut-être inutile
+				if(arbre.getEnfants().size() > 2) {
 					generateCode(arbre.getEnfants().get(2));
 				}
 				
@@ -145,37 +141,43 @@ public class Generator {
 				break;
 			
 			case COMPARE:
-				generateCodeForTwoChildren(arbre);
+				generateCodeForTwoChildren(arbre, "get");
 				writeLine("cmpeq.i");
 				break;
 				
 			case DIFF:
-				generateCodeForTwoChildren(arbre);
+				generateCodeForTwoChildren(arbre, "get");
 				writeLine("cmpne.i");
 				break;
 				
 			case INF:
-				generateCodeForTwoChildren(arbre);
+				generateCodeForTwoChildren(arbre, "get");
 				writeLine("cmplt.i");
 				break;
 				
 			case INF_EGAL:
-				generateCodeForTwoChildren(arbre);
+				generateCodeForTwoChildren(arbre, "get");
 				writeLine("cmple.i");
 				break;
 				
 			case SUP:
-				generateCodeForTwoChildren(arbre);
+				generateCodeForTwoChildren(arbre, "get");
 				writeLine("cmpgt.i");
 				break;
 				
 			case SUP_EGAL:
-				generateCodeForTwoChildren(arbre);
+				generateCodeForTwoChildren(arbre, "get");
 				writeLine("cmpge.i");
 				break;
 				
 			case EGAL:
-				generateCodeForTwoChildren(arbre);
+				if(arbre.getEnfants().get(0).getNoeud().getCategorie() != Categorie.IDENT) {
+					generateCode(arbre.getEnfants().get(0));
+				}
+				if(arbre.getEnfants().get(1).getNoeud().getCategorie() != Categorie.IDENT) {
+					generateCode(arbre.getEnfants().get(1));
+				}
+				// problème si 2=2???
 				writeLine("set", arbre.getEnfants().get(0).getNoeud().getPosition(), arbre.getEnfants().get(0).getNoeud().getStrValue());
 				break;
 				
@@ -188,9 +190,15 @@ public class Generator {
 				break;
 				
 			case ADD:
-				generateCode(arbre.getEnfants().get(0));	
+				generateCode(arbre.getEnfants().get(0));
 				generateCode(arbre.getEnfants().get(1));
 				writeLine("add.i");
+				break;
+			
+			case SUB:
+				generateCode(arbre.getEnfants().get(0));
+				generateCode(arbre.getEnfants().get(1));
+				writeLine("sub.i");
 				break;
 				
 			case MUL:
@@ -198,55 +206,39 @@ public class Generator {
 				generateCode(arbre.getEnfants().get(1));
 				writeLine("mul.i");
 				break;
+			
+			case DIV:
+				generateCode(arbre.getEnfants().get(0));
+				generateCode(arbre.getEnfants().get(1));
+				writeLine("div.i");
+				break;
+			
+			case MODULO:
+				generateCode(arbre.getEnfants().get(0));
+				generateCode(arbre.getEnfants().get(1));
+				writeLine("mod.i");
+				break;
 	
 			default:
 				break;
 		}
 	}
 	
-	public void generateCodeForTwoChildren(Arbre arbre) throws IOException {
+	// TODO : plus propre si on a le tps
+	public void generateCodeForTwoChildren(Arbre arbre, String instruction) throws IOException{
 		if(arbre.getEnfants().get(0).getNoeud().getCategorie() != Categorie.IDENT) {
 			generateCode(arbre.getEnfants().get(0));
+		} else {
+			writeLine(instruction, arbre.getEnfants().get(0).getNoeud().getPosition(), arbre.getEnfants().get(0).getNoeud().getStrValue());
 		}
 		if(arbre.getEnfants().get(1).getNoeud().getCategorie() != Categorie.IDENT) {
 			generateCode(arbre.getEnfants().get(1));
+		} else {
+			writeLine(instruction, arbre.getEnfants().get(1).getNoeud().getPosition(), arbre.getEnfants().get(1).getNoeud().getStrValue());
 		}
+		
 	}
-	
-	/**
-	 * DEPRECATED
-	 * 
-	 * @param arbre
-	 * @param level
-	 * @throws IOException
-	 */
-	public void generateExpression(Arbre arbre, int level) throws IOException {
-		if (arbre == null) {
-			return;
-		}
-		
-		if (arbre.getEnfants() == null) {
-			if (arbre.getNoeud().getCategorie() == Categorie.CST_INT) {
-				writeLine("push.i", arbre.getNoeud().getIntValue());
-			}
-			return;
-		}
-
-		for (Arbre enfant : arbre.getEnfants()) {
-			generateExpression(enfant, level + 1);
-		}
-		
-		if (arbre.getNoeud().getCategorie() == Categorie.ADD){
-			writeLine("add.i");
-			return;
-		}
-		
-		if (arbre.getNoeud().getCategorie() == Categorie.MUL){
-			writeLine("mul.i");
-			return;
-		}
-	}
-		
+			
 	public void writeLine(String instruction) throws IOException {
 		writeLine(instruction, "");
 	}
