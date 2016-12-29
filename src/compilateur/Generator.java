@@ -190,32 +190,32 @@ public class Generator {
 				break;
 				
 			case ADD:
-				generateCode(arbre.getEnfants().get(0));
 				generateCode(arbre.getEnfants().get(1));
+				generateCode(arbre.getEnfants().get(0));
 				writeLine("add.i");
 				break;
 			
 			case SUB:
-				generateCode(arbre.getEnfants().get(0));
 				generateCode(arbre.getEnfants().get(1));
+				generateCode(arbre.getEnfants().get(0));
 				writeLine("sub.i");
 				break;
 				
 			case MUL:
-				generateCode(arbre.getEnfants().get(0));
 				generateCode(arbre.getEnfants().get(1));
+				generateCode(arbre.getEnfants().get(0));
 				writeLine("mul.i");
 				break;
 			
 			case DIV:
-				generateCode(arbre.getEnfants().get(0));
 				generateCode(arbre.getEnfants().get(1));
+				generateCode(arbre.getEnfants().get(0));
 				writeLine("div.i");
 				break;
 			
 			case MODULO:
-				generateCode(arbre.getEnfants().get(0));
 				generateCode(arbre.getEnfants().get(1));
+				generateCode(arbre.getEnfants().get(0));
 				writeLine("mod.i");
 				break;
 	
