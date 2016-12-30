@@ -80,11 +80,8 @@ public class Generator {
 				}
 				
 				generateCode(arbre.getEnfants().get(3));
-				if(arbre.getEnfants().get(1).getNoeud().getStrValue().equalsIgnoreCase("main")) {
-					writeLine("ret");
-				}
-				else {
-					// ret dans toutes les fonctions sauf le main car on oblige l'utilisateur à mettre un return
+				// Si la fonction n'est pas le main, on fait le return
+				if(!arbre.getEnfants().get(1).getNoeud().getStrValue().equalsIgnoreCase("main")) {
 					writeLine("ret");
 					writeLine("; return par defaut");
 					writeLine("push.i", 0);

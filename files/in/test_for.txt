@@ -3,8 +3,7 @@ int main() {
 	var x : int;
 	x=5;
 	for(i=0;i<2;i=i+1) {
-		x=3;
-		echo x;
+		echo i;
 	}
 	echo x;
 	return x;

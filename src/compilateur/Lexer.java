@@ -5,8 +5,6 @@ import java.io.FileReader;
 import java.io.LineNumberReader;
 import java.util.Arrays;
 
-import sun.nio.cs.ext.ISCII91;
-
 /**
  * 
  * Analyseur lexical (FRONTEND)
