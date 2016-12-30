@@ -98,20 +98,20 @@ public class Generator {
 					generateCode(arbre.getEnfants().get(i));
 				}
 				break;
-				
+			
 			case SEQ:
 				generateCode(arbre.getEnfants().get(0));
 				generateCode(arbre.getEnfants().get(1));
 				break;
 				
 			case LOOP:
+				// un seul enfant
 				generateCode(arbre.getEnfants().get(0));
-				generateCode(arbre.getEnfants().get(1));
 				break;
 				
 			case ECHO:
-				writeLine("get", arbre.getNoeud().getPosition());
-				writeLine("out.i");
+				writeLine("get", arbre.getNoeud().getPosition(), "affichage de " + arbre.getNoeud().getStrValue());
+				writeLine("out.i", "; affichage de " + arbre.getNoeud().getStrValue());
 				break;
 				
 			case CALL:
@@ -121,26 +121,53 @@ public class Generator {
 				}
 				writeLine("call", arbre.getNoeud().getIntValue());
 				break;
-			
-			case IF:			
-				// avec jumpt
-
-				// on génère le code de la condition
+			/* avant boucle for => if seul
+			case IF:
+				// on génère la condition
 				generateCode(arbre.getEnfants().get(0));
 				writeLine("jumpt", "if_" + arbre.getEnfants().get(0).getNoeud().getIntValue());
+				
+				// génère le code si on entre dans le else
 				if(arbre.getEnfants().size() > 2) {
 					generateCode(arbre.getEnfants().get(2));
 				}
 				writeLine("jump", "end_if_" + arbre.getEnfants().get(0).getNoeud().getIntValue());
-				// génère le code du if
+				
+				// génère le code si on entre dans le if
 				writeLineWithoutTab(".if_" + arbre.getEnfants().get(0).getNoeud().getIntValue());
 				generateCode(arbre.getEnfants().get(1));
 				
+				// label de fin
+				writeLineWithoutTab(".end_if_" + arbre.getEnfants().get(0).getNoeud().getIntValue());
+				break;
+			*/
+			case IF:
+				writeLineWithoutTab(".if_" + arbre.getEnfants().get(0).getNoeud().getIntValue());
 				
+				// on génère la condition
+				generateCode(arbre.getEnfants().get(0));
+				writeLine("jumpt", "in_if_" + arbre.getEnfants().get(0).getNoeud().getIntValue());
+				
+				// génère le code si on entre dans le else
+				if(arbre.getEnfants().size() > 2) {
+					// pas dans le cas d'une boucle for
+					if (!arbre.getEnfants().get(0).getNoeud().getCategorie().equals(Categorie.BREAK)) {
+						generateCode(arbre.getEnfants().get(2));
+					}
+				}
+				writeLine("jump", "end_if_" + arbre.getEnfants().get(0).getNoeud().getIntValue());
+				
+				// génère le code si on entre dans le if
+				writeLineWithoutTab(".in_if_" + arbre.getEnfants().get(0).getNoeud().getIntValue());
+				generateCode(arbre.getEnfants().get(1));
+				
+				// on boucle (dégueulasse mais on va au plus vite sans trop réfléchir...)
+				if (arbre.getEnfants().get(1).getNoeud().getCategorie().equals(Categorie.SEQ)) {
+					writeLine("jump", "if_" + arbre.getEnfants().get(0).getNoeud().getIntValue());
+				}
 				
 				// label de fin
 				writeLineWithoutTab(".end_if_" + arbre.getEnfants().get(0).getNoeud().getIntValue());
-				
 				break;
 			
 			case COMPARE:

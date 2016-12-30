@@ -1,12 +1,11 @@
 int main() {
 	var i : int;
 	var x : int;
-	var y : int;
 	x=5;
-	y=3;
 	for(i=0;i<2;i=i+1) {
-		x=x+1;
-		y=y-1;
+		x=3;
+		echo x;
 	}
-	x=-x;
+	echo x;
+	return x;
 }

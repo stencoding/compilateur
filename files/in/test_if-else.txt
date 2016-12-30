@@ -1,14 +1,11 @@
 int main() {
 	var x : int;
-	x=2;
-	if(x<3) {
+	x=4;
+	if(x>4) {
 		x=5;
 	} else {
 		x=8;
 	}
 	echo x;
-	var y : int;
-	y = 8+x-5*2;
-	echo y;
 	return x;
 }

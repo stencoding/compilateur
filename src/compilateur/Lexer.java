@@ -5,6 +5,8 @@ import java.io.FileReader;
 import java.io.LineNumberReader;
 import java.util.Arrays;
 
+import sun.nio.cs.ext.ISCII91;
+
 /**
  * 
  * Analyseur lexical (FRONTEND)
@@ -145,12 +147,14 @@ public class Lexer {
 			token.setClasse(Classe.TOK_ACC_FERM);
 			break;
 
-		case "!=":
-			token.setClasse(Classe.TOK_DIFF);
-			break;
+		case "!":
+			if (data[++this.pos].equals("=")) {
+				token.setClasse(Classe.TOK_DIFF);
+				break;
+			}
 
 		case "=":
-			if (data[this.pos++] == "=") {
+			if (data[++this.pos].equals("=")) {
 				token.setClasse(Classe.TOK_COMPARE);
 				break;
 			}
@@ -160,7 +164,7 @@ public class Lexer {
 			break;
 
 		case ">":
-			if (data[this.pos++] == "=") {
+			if (data[++this.pos].equals("=")) {
 				token.setClasse(Classe.TOK_SUP_EGAL);
 				break;
 			}
@@ -170,7 +174,7 @@ public class Lexer {
 			break;
 
 		case "<":
-			if (data[this.pos++] == "=") {
+			if (data[++this.pos].equals("=")) {
 				token.setClasse(Classe.TOK_INF_EGAL);
 				break;
 			}

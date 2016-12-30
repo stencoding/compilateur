@@ -24,12 +24,12 @@ public class Main {
 			// test condition :
 			// OK
 			// TODO : faire aussi le noeud sub avec add.i de - arbre.getNoeud().getIntValue()
-			Lexer lexer = new Lexer("./files/in/test_if-else.txt");			
-			Lexer lexer2 = new Lexer("./files/in/test_if-else.txt");
+//			Lexer lexer = new Lexer("./files/in/test_if-else.txt");			
+//			Lexer lexer2 = new Lexer("./files/in/test_if-else.txt");
 			
 			// test boucle TODO
-//			Lexer lexer = new Lexer("./files/in/test_for.txt");			
-//			Lexer lexer2 = new Lexer("./files/in/test_for.txt");
+			Lexer lexer = new Lexer("./files/in/test_for.txt");			
+			Lexer lexer2 = new Lexer("./files/in/test_for.txt");
 
 			//test_function OK
 //			Lexer lexer = new Lexer("./files/in/test_function.txt");			
