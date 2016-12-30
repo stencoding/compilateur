@@ -122,18 +122,21 @@ public class Generator {
 				writeLine("call", arbre.getNoeud().getIntValue());
 				break;
 			
-			case IF:
+			case IF:			
+				// avec jumpt
+
 				// on génère le code de la condition
 				generateCode(arbre.getEnfants().get(0));
-				writeLine("jumpf", "else_" + arbre.getEnfants().get(0).getNoeud().getIntValue());
-				// génère le code du if
-				generateCode(arbre.getEnfants().get(1));
-				writeLine("jump", "end_if_" + arbre.getEnfants().get(0).getNoeud().getIntValue());
-				// génère le code du else
-				writeLineWithoutTab(".else_" + arbre.getEnfants().get(0).getNoeud().getIntValue());
+				writeLine("jumpt", "if_" + arbre.getEnfants().get(0).getNoeud().getIntValue());
 				if(arbre.getEnfants().size() > 2) {
 					generateCode(arbre.getEnfants().get(2));
 				}
+				writeLine("jump", "end_if_" + arbre.getEnfants().get(0).getNoeud().getIntValue());
+				// génère le code du if
+				writeLineWithoutTab(".if_" + arbre.getEnfants().get(0).getNoeud().getIntValue());
+				generateCode(arbre.getEnfants().get(1));
+				
+				
 				
 				// label de fin
 				writeLineWithoutTab(".end_if_" + arbre.getEnfants().get(0).getNoeud().getIntValue());
