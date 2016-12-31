@@ -53,6 +53,10 @@ public class Main {
 //			Lexer lexer = new Lexer("./files/in/test_for.txt");			
 //			Lexer lexer2 = new Lexer("./files/in/test_for.txt");
 			
+			// test boucle WHILE
+//			Lexer lexer = new Lexer("./files/in/test_while.txt");			
+//			Lexer lexer2 = new Lexer("./files/in/test_while.txt");
+			
 			//test_function OK
 //			Lexer lexer = new Lexer("./files/in/test_function.txt");			
 //			Lexer lexer2 = new Lexer("./files/in/test_function.txt");

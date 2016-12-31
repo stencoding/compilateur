@@ -1,10 +1,6 @@
 int main() {
 	var i : int;
-	var x : int;
-	x=5;
 	for(i=0;i<2;i=i+1) {
 		echo i;
 	}
-	echo x;
-	return x;
 }

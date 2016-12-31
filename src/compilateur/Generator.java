@@ -23,17 +23,7 @@ public class Generator {
 		try {
 			this.fichier = new BufferedWriter(new FileWriter("./files/out/code_generated.txt"));
 
-//			this.fichier.write(".start");
-			
-			//this.parser.affichageParser();
-			
-//			generateExpression(this.parser.expression(), 0);
-//			generateCode(this.parser.expression());
-//			Arbre.affiche(this.parser.racine(), 0);
-
 			generateCode(this.parser.racine());
-//			
-//			writeLine("halt");
 			
 			this.fichier.close();
 			
@@ -118,39 +108,16 @@ public class Generator {
 				}
 				writeLine("call", arbre.getNoeud().getIntValue());
 				break;
-			/* avant boucle for => if seul
-			case IF:
-				// on génère la condition
-				generateCode(arbre.getEnfants().get(0));
-				writeLine("jumpt", "if_" + arbre.getEnfants().get(0).getNoeud().getIntValue());
-				
-				// génère le code si on entre dans le else
-				if(arbre.getEnfants().size() > 2) {
-					generateCode(arbre.getEnfants().get(2));
-				}
-				writeLine("jump", "end_if_" + arbre.getEnfants().get(0).getNoeud().getIntValue());
-				
-				// génère le code si on entre dans le if
-				writeLineWithoutTab(".if_" + arbre.getEnfants().get(0).getNoeud().getIntValue());
-				generateCode(arbre.getEnfants().get(1));
-				
-				// label de fin
-				writeLineWithoutTab(".end_if_" + arbre.getEnfants().get(0).getNoeud().getIntValue());
-				break;
-			*/
+
 			case IF:
 				writeLineWithoutTab(".if_" + arbre.getEnfants().get(0).getNoeud().getIntValue());
 				
 				// on génère la condition
 				generateCode(arbre.getEnfants().get(0));
 				writeLine("jumpt", "in_if_" + arbre.getEnfants().get(0).getNoeud().getIntValue());
-				
-				// génère le code si on entre dans le else
-				if(arbre.getEnfants().size() > 2) {
-					// pas dans le cas d'une boucle for
-					if (!arbre.getEnfants().get(0).getNoeud().getCategorie().equals(Categorie.BREAK)) {
-						generateCode(arbre.getEnfants().get(2));
-					}
+								
+				if(arbre.getEnfants().size() > 2 && !arbre.getEnfants().get(2).getNoeud().getCategorie().equals(Categorie.BREAK)) {
+					generateCode(arbre.getEnfants().get(2));
 				}
 				writeLine("jump", "end_if_" + arbre.getEnfants().get(0).getNoeud().getIntValue());
 				
@@ -158,8 +125,8 @@ public class Generator {
 				writeLineWithoutTab(".in_if_" + arbre.getEnfants().get(0).getNoeud().getIntValue());
 				generateCode(arbre.getEnfants().get(1));
 				
-				// on boucle (dégueulasse mais on va au plus vite sans trop réfléchir...)
-				if (arbre.getEnfants().get(1).getNoeud().getCategorie().equals(Categorie.SEQ)) {
+				// on boucle (sale, au plus vite sans trop réfléchir...)
+				if(arbre.getEnfants().size() > 2 && arbre.getEnfants().get(2).getNoeud().getCategorie().equals(Categorie.BREAK)) {
 					writeLine("jump", "if_" + arbre.getEnfants().get(0).getNoeud().getIntValue());
 				}
 				
@@ -204,7 +171,7 @@ public class Generator {
 				if(arbre.getEnfants().get(1).getNoeud().getCategorie() != Categorie.IDENT) {
 					generateCode(arbre.getEnfants().get(1));
 				}
-				// problème si 2=2???
+
 				writeLine("set", arbre.getEnfants().get(0).getNoeud().getPosition(), arbre.getEnfants().get(0).getNoeud().getStrValue());
 				break;
 				
@@ -293,7 +260,6 @@ public class Generator {
 	public void writeLineWithoutTab(String label) throws IOException {
 		this.fichier.newLine();
 		this.fichier.write(label);
-		
 	}
 
 }
