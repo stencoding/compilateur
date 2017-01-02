@@ -4,14 +4,18 @@ import java.util.ArrayList;
 
 /**
  * 
- * Analyseur syntaxique (FRONTEND)
+ * Analyseur syntaxique (FRONTEND : tout ce qui est lié au langage source).
+ * Après lecture et découpage en Token par le Lexer, il transforme le code compilé en arbre syntaxique.
  * 
- * Priorité au plus haut niveau : primaire->multiplicatif->additif->expression
+ * Priorité au plus haut niveau
  * 
- * Niveau primaire : P <- ident | cst_int | (E) | -P Niveau multiplicatif : M <-
- * P (* M | / M | % M | epsilon) Niveau additif : A <- M (+ M | - M | epsilon)
- * Niveau expression : E <- A
- * 
+ * Niveau primaire :      P <- ident | ident "(" E*")" | cst_int | -P | (E)
+ * Niveau multiplicatif : M <- P (* M | / M | % M | ε)
+ * Niveau additif :       A <- M (+ A | - A | ε)
+ * Niveau comparatif :    C <- A (==A | !=A | <A | <=A | >A | >=A | ε)
+ * Niveau expression :    E <- C
+ * Niveau fonction :      F <- Type IDENT "(" Args ")" I Création d'une fonction
+ * Niveau racine :        X <- I Noeud racine
  */
 public class Parser {
 
@@ -39,12 +43,13 @@ public class Parser {
 
 	/**
 	 * Instruction
+	 * 
 	 * I <- var Ident : TYPE;
-	 * | Affectation 
-	 * | if (E) I (else I |epsilon) 
+	 * | aff 
+	 * | if (E) I (else I | ε) 
 	 * | while (E) I 
-	 * | {Seq I} 
-	 * | for (Ident = Aff;E;Aff) I
+	 * | {I}* (block) 
+	 * | for (Ident = aff;E;aff) I
 	 * | return E ";"
 	 * 
 	 * @return Arbre
@@ -112,7 +117,7 @@ public class Parser {
 			return a1;
 		}
 
-		// if (E) I (else I | epsilon)
+		// if (E) I (else I | ε)
 		if (lexer.look().getClasse() == Classe.TOK_IF) {
 
 			Token tok = lexer.next(); // sur if
@@ -165,8 +170,7 @@ public class Parser {
 
 		}
 
-		// {block}
-		// TODO : à mettre dans une fonction
+		// {I}* (block)
 		if (lexer.look().getClasse() == Classe.TOK_ACC_OUVR) {
 			lexer.next(); // on avance
 			Arbre ins = instruction();
@@ -193,7 +197,7 @@ public class Parser {
 			return new Arbre(nodeBlock, enfants);
 		}
 
-		// for (A;E;A)
+		// for (Aff;E;Aff)
 		if (lexer.look().getClasse() == Classe.TOK_FOR) {
 
 			lexer.next(); // lexer sur le FOR
@@ -363,8 +367,7 @@ public class Parser {
 	}
 
 	/**
-	 * Niveau primaire P <- ident | ident "(" E* ")"  | cst_int | (E)
-	 * 
+	 * Niveau primaire : P <- ident | ident "(" E* ")"  | cst_int | (E)
 	 * 
 	 * @return Arbre
 	 * @throws Exception
@@ -490,7 +493,7 @@ public class Parser {
 	}
 
 	/**
-	 * Niveau additif : A <- M (+ M | - M | epsilon)
+	 * Niveau additif : A <- M (+ M | - M | ε)
 	 * 
 	 * @return Arbre
 	 * @throws Exception
@@ -591,13 +594,11 @@ public class Parser {
 			return new Arbre(op, enfants);
 		}
 
-		// TODO : à finir => ajouter +=, -=, etc.
-
 		return null;
 	}
 
 	/**
-	 * Niveau expression E <- C
+	 * Niveau expression : E <- C
 	 * 
 	 * @return Arbre
 	 * @throws Exception
@@ -728,7 +729,7 @@ public class Parser {
 	}
 
 	/**
-	 * Niveau X <- I Noeud racine
+	 * Niveau racine : X <- I Noeud racine
 	 * 
 	 * @return Arbre
 	 * @throws Exception

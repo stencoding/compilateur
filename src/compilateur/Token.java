@@ -1,5 +1,12 @@
 package compilateur;
 
+/**
+ * 
+ * Token (FRONTEND)
+ * Il est créé lors de l'analyse lexicale.
+ * Lorsque des mots-clés, ... sont reconnus, ils sont remplacés par des tokens.
+ *
+ */
 public class Token {
 
 	private Classe classe;

@@ -5,6 +5,13 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.Stack;
 
+/**
+ * 
+ * Table des symboles (entre FRONTEND et BACKEND).
+ * Elle stocke les variables, leur type et leur portée dans le scope.
+ * Les variables sont stockées sous forme de Symbole.
+ *
+ */
 public class TableDeSymbole {
 
 	// table de hashage
@@ -12,10 +19,6 @@ public class TableDeSymbole {
 
 	public TableDeSymbole() {
 		this.pile = new Stack<HashMap<String, Symbole>>();
-		
-		// ajout du 1er bloc => scope global (portée global)
-		// maintenant dans le X
-//		this.push();
 	}
 
 	/**

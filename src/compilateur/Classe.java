@@ -1,5 +1,11 @@
 package compilateur;
 
+/**
+ * 
+ * Classe (FRONTEND).
+ * Elle compose le Token. Elle permet de l'identifier.
+ *
+ */
 public enum Classe {
 	// Opérateurs
 	TOK_ADD,

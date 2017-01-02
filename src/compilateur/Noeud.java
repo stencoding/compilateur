@@ -1,5 +1,9 @@
 package compilateur;
 
+/**
+ * Noeud : générer par le FRONTEND (Parser) et utilisé dans le BACKEND (tout ce qui est lié au langage cible) par le Generator.
+ * Il compose l'arbre syntaxique et est lui-même composé d'une Catégorie.
+ */
 public class Noeud {
 
 	// Catégorie du noeud (= la classe d'un Token)

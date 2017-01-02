@@ -4,7 +4,9 @@ import java.util.ArrayList;
 
 /**
  * 
- * Arbre	
+ * Arbre (entre FRONTEND et BACKEND).
+ * Cet arbre sert notamment pour créer un arbre syntaxique composé de Noeuds.
+ * Il est créé par le Lexer et analysé par le Generator pour généré le code (pseudo-code assembleur).
  *
  */
 public class Arbre {
@@ -73,7 +75,7 @@ public class Arbre {
 	
 	/**
 	 * Affichage de l'arbre au format json
-	 * TODO : à finir
+	 * Non terminé
 	 * 
 	 * @param arbre
 	 * @param level

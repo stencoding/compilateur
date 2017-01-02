@@ -1,5 +1,11 @@
 package compilateur;
 
+/**
+ * 
+ * Symbole (entre FRONTEND et BACKEND).
+ * Il représente une variable et est utilisé dans la Table des Symboles.
+ *
+ */
 public class Symbole {
 
 	// Identificateur du token
@@ -7,7 +13,6 @@ public class Symbole {
 	
 	// Type de l'identificateur (variable)
 	private String type;
-	// TODO: pourquoi c'est un String et pas une Classe ?
 	
 	// Position dans la mémoire (adresse mémoire si fonction)
 	private int	position;

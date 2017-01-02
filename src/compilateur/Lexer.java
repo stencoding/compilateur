@@ -7,7 +7,8 @@ import java.util.Arrays;
 
 /**
  * 
- * Analyseur lexical (FRONTEND)
+ * Analyseur lexical (FRONTEND : tout ce qui est lié au langage source)
+ * Il lit le code à compiler (fichier texte) et le transforme en Token
  *
  */
 public class Lexer {

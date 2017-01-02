@@ -4,6 +4,12 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 
+/**
+ * 
+ * Generator (BACKEND : tout ce qui est lié au langage cible).
+ * Il analyse l'arbre syntaxique et génère le langage cible.
+ *
+ */
 public class Generator {
 
 	private Parser parser;
@@ -15,8 +21,6 @@ public class Generator {
 	 * @param parser
 	 * @throws Exception
 	 */
-	
-	// télécharger compilateur : http://perso.limsi.fr/lavergne
 	public Generator(Parser parser) throws Exception {
 		this.parser = parser;
 
@@ -26,12 +30,6 @@ public class Generator {
 			generateCode(this.parser.racine());
 			
 			this.fichier.close();
-			
-//			Runtime runtime = Runtime.getRuntime();
-			//./msm -d -d ../files/out/code_generated.txt 
-//	        Process p =runtime.exec(new String[] { "./MSM/msm","../files/out/code_generated.txt"}); // la commande
-//	        Thread.sleep(9000); // pause de 9 secondes
-//	        p.destroy(); // détruire le processus
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -218,7 +216,6 @@ public class Generator {
 		}
 	}
 	
-	// TODO : plus propre si on a le tps
 	public void generateCodeForTwoChildren(Arbre arbre, String instruction) throws IOException{
 		if(arbre.getEnfants().get(0).getNoeud().getCategorie() != Categorie.IDENT) {
 			generateCode(arbre.getEnfants().get(0));

@@ -1,5 +1,12 @@
 package compilateur;
 
+/**
+ * 
+ * Catégorie (BACKEND/FRONTEND)
+ * Elle est utilisée par le Noeud.
+ * Elle sert notamment lors de la génération du code afin d'identifier chaque Noeud.
+ * 
+ */
 public enum Categorie {
 	// Opérateurs
 	ADD,
@@ -30,7 +37,7 @@ public enum Categorie {
 	ARGS,
 	ECHO,
 	RETURN,
-	// Type de variable
+	// Type de variables
 	INT,
 	STR,
 	// stocke une constante
