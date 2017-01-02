@@ -1,5 +1,6 @@
 package compilateur;
 
+import java.io.File;
 import java.util.Arrays;
 
 public class Main {
@@ -15,20 +16,25 @@ public class Main {
 						affichage = true;							
 					}
 				}
-				String filemane = argumentNomFichier.substring(1);
-				System.out.println("Fichier à traiter : " + filemane);
-				if(affichage) {
-					System.out.println("Affichage de l'arbre : ");
-					Lexer lexerAffichage = new Lexer(filemane);
-					Parser parserAffichage = new Parser(lexerAffichage);
-					parserAffichage.affichageParser();
+				String filename = argumentNomFichier.substring(1);
+				File file = new File(filename);
+				if(file.isFile()) {
+					System.out.println("Fichier à traiter : " + filename);
+					if(affichage) {
+						System.out.println("Affichage de l'arbre : ");
+						Lexer lexerAffichage = new Lexer(filename);
+						Parser parserAffichage = new Parser(lexerAffichage);
+						parserAffichage.affichageParser();
+					}
+					System.out.println("Analyse du fichier en cours...");
+					Lexer lexerGenerateur = new Lexer(filename);
+					Parser parserGenerateur = new Parser(lexerGenerateur);			
+					new Generator(parserGenerateur);
+					System.out.println("Le code a été généré dans le fichier ./files/out/code_generated.txt");
+				}	
+				else {
+					System.out.println("Le fichier saisi ["+filename +"] n'existe pas");
 				}
-				System.out.println("Analyse du fichier en cours...");
-				Lexer lexerGenerateur = new Lexer(filemane);
-				Parser parserGenerateur = new Parser(lexerGenerateur);			
-				new Generator(parserGenerateur);
-				System.out.println("Le code a été généré dans le fichier ./files/out/code_generated.txt");
-				
 			}
 			// TESTS POUR LE LEXER
 //			Lexer lexer = new Lexer("./files/in/general.txt");

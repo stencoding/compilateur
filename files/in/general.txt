@@ -1,17 +1,26 @@
-if(a>2) {
-	y=(x+3)*2;
-} else {
-	x=a-7;
-	y=a-8;
+int main() {
+	var x : int;
+	var z : int;
+	x = 5;
+	z = sommeNbPremier(x);
+	echo z;
+	var a : int;
+	var b : int;
+	var y : int;
+	a = 12;
+	b = 6;
+	y = somme(a, b);
+	echo y;
+	return y;
 }
-
-while(i<10) {
-	i=i+1;
-	j=i-1;
-	x=-5;
+int sommeNbPremier(x) {
+	var i : int;
+	var res : int;
+	for(i = 1 ; i <= x ; i = i + 1) {
+		res = res + i;
+	}
+	return res;
 }
-
-for(i=0 ; i<0 ; i=i+1;) {
-	x=x+1;
-	y=y-1;
+int somme(a, b) {
+	return a + b;
 }
