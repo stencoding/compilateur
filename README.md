@@ -26,3 +26,16 @@ permet d'utiliser le MSM avec le fichier code_generated.txt.
 La sortie est redirigée dans le fichier out/out.txt. C'est dedans que l'on pourra voir ce que le MSM a généré : seulement les out.i ou la pile si les paramètres -d -d ont été utilisés.
 
 			
+			
+Utilisation de notre compilateur avec Ant :
+
+Installation de ant sur Ubuntu : sudo apt install ant
+Les commandes :
+	- compile pour générer les fichiers bin
+	- doc pour générer la javaDoc
+	- jar pour générer le jar 
+	- clean pour supprimer les dossier bin, javaDoc et exe
+
+- ant jar
+- java -jar exe/Main.jar ./files/in/general.txt non
+- ./MSM/msm ./files/out/code_generated.txt > ./files/out/out.txt

@@ -1,0 +1,29 @@
+<project name = "Compilateur" default = "compile">
+	<target name = "compile">
+		<mkdir dir = "bin"/>
+		<javac srcdir = "src"
+				destdir = "bin"
+				includeantruntime="false" />
+	</target>
+	<target name = "clean">
+		<delete dir = "bin"/>
+		<delete dir = "javaDoc"/>	
+		<delete dir = "exe"/>			
+	</target>
+	<target name = "doc">
+		<mkdir dir = "javaDoc"/>
+		<javadoc sourcepath = "src"
+				destdir = "javaDoc">
+				<fileset dir = "src"/>		
+		</javadoc>			
+	</target>
+	<target name = "jar" depends = "compile">
+		<mkdir dir = "exe"/>
+		<jar basedir = "bin"
+			destfile = "exe/Main.jar">
+			<manifest>
+				<attribute name="Main-Class" value="Main"/>
+			</manifest>
+		</jar>
+	</target>
+</project>
