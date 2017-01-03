@@ -12,7 +12,7 @@ public class Main {
 
 	public static void main(String[] args) {
 		if(args.length > 0) {
-			String argumentNomFichier = args[0];
+			String filename = args[0];
 			boolean affichage = false;
 			if(args.length > 1) {
 				String argumentAffichage = args[1];
@@ -20,7 +20,6 @@ public class Main {
 				affichage = true;							
 				}
 			}
-			String filename = argumentNomFichier.substring(1);
 			File file = new File(filename);
 			try {
 				if(file.isFile()) {
