@@ -1,5 +1,3 @@
-
-
 import java.util.ArrayList;
 
 /**
@@ -16,20 +14,56 @@ import java.util.ArrayList;
  * Niveau expression :    E <- C
  * Niveau fonction :      F <- Type IDENT "(" Args ")" I Création d'une fonction
  * Niveau racine :        X <- I Noeud racine
+ * 
+ * @author Mathilde PREVOST & Steve NEGRINE
  */
 public class Parser {
-
+	
+	/**
+     * Le nombre de variable dans le programme.
+     * 
+     */
 	private int nvar;
+	
+	/**
+     * Le nombre d'argument dans une fonction.
+     * 
+     */
 	private int narg;
+	
+	/**
+     * Le nombre de label dans le programme.
+     * 
+     */
 	private int nlabel;
+	
+	/**
+     * Présence d'un return dans la fonction
+     * 
+     */
 	private boolean returnOk;
+	
+	/**
+     * Le Lexer
+     * 
+     * @see Lexer
+     */	
 	private Lexer lexer;
+	
+	/**
+     * La table des symboles
+     * 
+     * @see TableDeSymbole
+     */
 	private TableDeSymbole tableSymbole;
 
 	/**
-	 * On récupère l'analyseur lexical
+	 * Constructeur Parser.
+	 * La nlabel est initialisé à 0.
+	 * Le returnOk est initialisé à false.
 	 * 
 	 * @param lexer
+     *            Le lexer (l'analyseur lexical) du Parser.
 	 * @throws Exception
 	 */
 	public Parser(Lexer lexer) throws Exception {
@@ -37,7 +71,12 @@ public class Parser {
 		this.nlabel = 0;
 		this.returnOk = false;
 	}
-
+	
+	/**
+	 * Affiche du Parser
+	 * 
+	 * @throws Exception
+	 */
 	public void affichageParser() throws Exception {
 		Arbre.affiche(racine(), 0);
 	}
@@ -106,7 +145,7 @@ public class Parser {
 			return new Arbre(op, enfants);
 		}
 
-		// A;
+		// Aff;
 		if (lexer.look().getClasse() == Classe.TOK_IDENT) {
 
 			Arbre a1 = affectation();
@@ -171,7 +210,7 @@ public class Parser {
 
 		}
 
-		// {I}* (block)
+		// {I}* 
 		if (lexer.look().getClasse() == Classe.TOK_ACC_OUVR) {
 			lexer.next(); // on avance
 			Arbre ins = instruction();
@@ -527,7 +566,7 @@ public class Parser {
 	}
 
 	/**
-	 * Niveau comparatif C <- A==A | A!=A
+	 * Niveau comparatif C <- A==B | A!=B | A>B | A>=B | A<B | A<=B 
 	 * 
 	 * @return Arbre
 	 * @throws Exception
@@ -612,7 +651,8 @@ public class Parser {
 	}
 
 	/**
-	 * Niveau fonction F <- Type IDENT "(" Args ")" I Création d'une fonction
+	 * Création d'une fonction
+	 * Niveau fonction F <- Type IDENT "(" Args ")" I 
 	 * 
 	 * @return Arbre
 	 * @throws Exception
@@ -732,7 +772,8 @@ public class Parser {
 	}
 
 	/**
-	 * Niveau racine : X <- I Noeud racine
+	 * Noeud racine
+	 * Niveau racine : X <- I 
 	 * 
 	 * @return Arbre
 	 * @throws Exception

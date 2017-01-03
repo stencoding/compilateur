@@ -1,5 +1,3 @@
-
-
 import java.io.File;
 import java.io.FileReader;
 import java.io.LineNumberReader;
@@ -10,14 +8,44 @@ import java.util.Arrays;
  * Analyseur lexical (FRONTEND : tout ce qui est lié au langage source)
  * Il lit le code à compiler (fichier texte) et le transforme en Token
  *
+ * @author Mathilde PREVOST & Steve NEGRINE
  */
+
 public class Lexer {
 
+	/**
+     * Le nom du fichier à analyser.
+     */	
 	private String filename;
+	
+	/**
+     * Tableau contenant le fichier à analyser.
+     */	
 	private String[] data;
+	
+	/**
+     * Le Token suivant.
+     * 
+     * @see Token
+     */	
 	private Token buffer;
+	
+	/**
+     * La position dans le tableau "data"
+     */
 	private int pos;
 
+	
+	/**
+	 * Constructeur Lexer.
+	 * La position est initialisé à 0 (on se met au début du tableau "data").
+	 * Le tableau "data" contient le fichier à analyser spliter mot par mot.
+	 * Le buffer est initialisé avec le prochain Token du tableau "data".
+	 * 
+	 * @param filename
+	 *            Le nom du fichier à analyser
+	 * @throws Exception
+	 */
 	public Lexer(String filename) throws Exception {
 		this.filename = filename;
 		this.pos = 0;
@@ -28,7 +56,7 @@ public class Lexer {
 	/**
 	 * Lecture du fichier "filename"
 	 * 
-	 * @return String chaine
+	 * @return Le contenu du fichier à analyser dans une chaine
 	 * @throws Exception
 	 */
 	private String lectureFile() throws Exception {
@@ -58,10 +86,9 @@ public class Lexer {
 	}
 
 	/**
-	 * Prend le prochain élément de la chaîne,
-	 * crée le token et avance dans la chaîne
+	 * Prend le prochain élément de la chaîne, crée le token et avance dans la chaîne.
 	 * 
-	 * @return Token token
+	 * @return Le token crée
 	 * @throws Exception 
 	 */
 	public Token prochain() throws Exception {
@@ -95,7 +122,7 @@ public class Lexer {
 
 		if (estLettre(data[this.pos])) {
 			String strTmp = lireIdent();
-			token.setClasse(filtrerMotCle(strTmp));
+			token.setClasse(getToken(strTmp));
 			
 			if (token.getClasse().equals(Classe.TOK_IDENT)) {
 				token.setChargeStr(strTmp);
@@ -200,31 +227,31 @@ public class Lexer {
 	}
 
 	/**
-	 * Retourne le token courant et passe au suivant
+	 * Retourne le token courant et passe au suivant.
 	 * 
-	 * @return Token tokenSuivant
+	 * @return Le token suivant
 	 * @throws Exception 
 	 */
 	public Token next() throws Exception {
 		Token tokenCourant = this.buffer;
-		this.buffer = prochain();
-		
+		this.buffer = prochain();		
 		return tokenCourant;
 	}
 
 	/**
-	 * Retourne le token suivant sans avancer
+	 * Retourne le token suivant sans avancer.
 	 * 
-	 * @return Token tokenSuivant
+	 * @return Le token suivant
 	 */
 	public Token look() {
 		return this.buffer;
 	}
 
 	/**
-	 * Si le caractère en paramètre est un espace
+	 * Si le caractère en paramètre est un espace.
 	 * 
 	 * @param caractere
+     *            Le caractère à évaluer.
 	 * @return boolean
 	 */
 	private boolean estEspace(String caractere) {
@@ -233,11 +260,12 @@ public class Lexer {
 		}
 		return false;
 	}
-	
+
 	/**
-	 * Si le caractère en paramètre est un saut de ligne
+	 * Si le caractère en paramètre est un saut de ligne.
 	 * 
 	 * @param caractere
+     *            Le caractère à évaluer.
 	 * @return boolean
 	 */
 	private boolean estSautDeLigne(String caractere) {
@@ -248,9 +276,10 @@ public class Lexer {
 	}
 	
 	/**
-	 * Si le caractère en paramètre est une indentation
+	 * Si le caractère en paramètre est une indentation.
 	 * 
 	 * @param caractere
+     *            Le caractère à évaluer.
 	 * @return boolean
 	 */
 	private boolean estIndentation(String caractere) {
@@ -261,9 +290,10 @@ public class Lexer {
 	}
 
 	/**
-	 * Si le caractère en paramètre est un guillemet
+	 * Si le caractère en paramètre est un guillemet.
 	 * 
 	 * @param caractere
+     *            Le caractère à évaluer.
 	 * @return boolean
 	 */
 	private boolean estGuillemet(String caractere) {
@@ -274,9 +304,10 @@ public class Lexer {
 	}
 
 	/**
-	 * Si le caractère en paramètre est un chiffre
+	 * Si le caractère en paramètre est un chiffre.
 	 * 
 	 * @param caractere
+     *            Le caractère à évaluer.
 	 * @return boolean
 	 */
 	private boolean estChiffre(String caractere) {
@@ -287,9 +318,10 @@ public class Lexer {
 	}
 
 	/**
-	 * Si le caractère en paramètre est une lettre
+	 * Si le caractère en paramètre est une lettre.
 	 * 
 	 * @param caractere
+     *            Le caractère à évaluer.
 	 * @return boolean
 	 */
 	private boolean estLettre(String caractere) {
@@ -300,11 +332,11 @@ public class Lexer {
 	}
 
 	/**
-	 * Retourne un nombre
-	 * On lit tous les chiffres jusqu'à ce que ça n'en soit pas un
-	 * ex. : 1234; => lit 1, puis 2, puis 3, puis 4 et s'arrête au ; 
+	 * Lit un nombre
+	 * On lit tous les chiffres jusqu'à ce que le suivant ne soit pas un chiffre
+	 * exemple : 1234; => on lit 1, puis 2, puis 3, puis 4 et on s'arrête au ; 
 	 * 
-	 * @return Integer nb
+	 * @return Le nombre entier
 	 */
 	private int lireInt() {
 		String nb = "";
@@ -317,12 +349,11 @@ public class Lexer {
 	}
 
 	/**
-	 * Retourne une chaine de caractères qui correspond 
-	 * au nom de la variable ou de la fonction
-	 * On lit tous les caractères jusqu'à ce que ça n'en soit pas un
-	 * ex. : toto; => lit t, puis o, puis t, puis o et s'arrête au ; 
+	 * Lit une chaine de caractères qui correspond soit à un nom de variable soit à un nom de fonction
+	 * On lit tous les caractères jusqu'à ce que le suivant ne soit pas une lettre
+	 * exemple : toto; => on lit t, puis o, puis t, puis o et on s'arrête au ; 
 	 * 
-	 * @return String chaine
+	 * @return La chaine de caractère entière.
 	 */
 	private String lireIdent() {
 		String chaine = "";
@@ -334,12 +365,11 @@ public class Lexer {
 	}
 
 	/**
-	 * Retourne une chaine de caractères qui correspond 
-	 * à la valeur d'une variable de type String
-	 * On lit tous les caractères jusqu'à ce que ça n'en soit pas un
-	 * ex. : toto" => lit t, puis o, puis t, puis o et s'arrête au " 
+	 * Lit une chaine de caractères qui correspond à la valeur d'une variable de type String
+	 * On lit tous les caractères jusqu'à ce que le suivant ne soit pas une lettre
+	 * exemple : toto" => on lit t, puis o, puis t, puis o et on s'arrête au " 
 	 * 
-	 * @return String chaine
+	 * @return La chaine de caractère entière.
 	 */
 	public String lireChaine() {
 		String chaine = "";
@@ -351,109 +381,56 @@ public class Lexer {
 	}
 
 	/**
-	 * Retourne la classe du token de la chaine passée en paramètre.
-	 * Si ce n'est pas un mot clé c'est alors une variable ou une fonction : TOK_IDENT
+	 * Crée un token en fonction de la chaine passée en paramètre.
+	 * Si la chaine n'est pas un mot clé, alors c'est un nom de variable ou de fonction
+	 * donc la classe est "TOK_IDENT"
 	 * 
 	 * @param chaine
-	 * @return Classe motCle
+     *            La chaine à convertir en Token.
+	 * @return La classe de la chaine passée en paramètre.
 	 */
-	private Classe filtrerMotCle(String chaine) {
+	private Classe getToken(String chaine) {
 		Classe motCle = Classe.TOK_IDENT;
 
 		switch (chaine.toLowerCase()) {
-		case "if":
-			motCle = Classe.TOK_IF;
-			break;
-		case "else":
-			motCle = Classe.TOK_ELSE;
-			break;
-
-		case "for":
-			motCle = Classe.TOK_FOR;
-			break;
-
-		case "while":
-			motCle = Classe.TOK_WHILE;
-			break;
-
-		case "var":
-			motCle = Classe.TOK_VAR;
-			break;
-
-		case "int":
-			motCle = Classe.TOK_INT;
-			break;
-			
-		case "return":
-			motCle = Classe.TOK_RETURN;
-			break;
-			
-		case "echo":
-			motCle = Classe.TOK_ECHO;
-			break;
+			case "if":
+				motCle = Classe.TOK_IF;
+				break;
+			case "else":
+				motCle = Classe.TOK_ELSE;
+				break;
+	
+			case "for":
+				motCle = Classe.TOK_FOR;
+				break;
+	
+			case "while":
+				motCle = Classe.TOK_WHILE;
+				break;
+	
+			case "var":
+				motCle = Classe.TOK_VAR;
+				break;
+	
+			case "int":
+				motCle = Classe.TOK_INT;
+				break;
+				
+			case "return":
+				motCle = Classe.TOK_RETURN;
+				break;
+				
+			case "echo":
+				motCle = Classe.TOK_ECHO;
+				break;
 		}
 		return motCle;
 	}
 
-	@Override
+	/**
+	 * Affiche le lexer
+	 */
 	public String toString() {
 		return "Lexer \n [data=" + Arrays.toString(data) + "]";
 	}
-
-	/**
-	 * @return the filename
-	 */
-	public String getFilename() {
-		return filename;
-	}
-
-	/**
-	 * @param filename the filename to set
-	 */
-	public void setFilename(String filename) {
-		this.filename = filename;
-	}
-
-	/**
-	 * @return the data
-	 */
-	public String[] getData() {
-		return data;
-	}
-
-	/**
-	 * @param data the data to set
-	 */
-	public void setData(String[] data) {
-		this.data = data;
-	}
-
-	/**
-	 * @return the pos
-	 */
-	public int getPos() {
-		return pos;
-	}
-
-	/**
-	 * @param pos the pos to set
-	 */
-	public void setPos(int pos) {
-		this.pos = pos;
-	}
-
-	/**
-	 * @return the buffer
-	 */
-	public Token getBuffer() {
-		return buffer;
-	}
-
-	/**
-	 * @param buffer the buffer to set
-	 */
-	public void setBuffer(Token buffer) {
-		this.buffer = buffer;
-	}
-
 }

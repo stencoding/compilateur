@@ -1,5 +1,3 @@
-
-
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
@@ -11,12 +9,19 @@ import java.util.Stack;
  * Elle stocke les variables, leur type et leur portée dans le scope.
  * Les variables sont stockées sous forme de Symbole.
  *
+ * @author Mathilde PREVOST & Steve NEGRINE
  */
 public class TableDeSymbole {
 
-	// table de hashage
+	/**
+     * La pile de la tableDeSymbole (table de hashage)
+     */	
 	private Stack<HashMap<String, Symbole>> pile;
 
+	/**
+	 * Constructeur TableDeSymbole.
+	 * 
+	 */
 	public TableDeSymbole() {
 		this.pile = new Stack<HashMap<String, Symbole>>();
 	}
@@ -24,10 +29,11 @@ public class TableDeSymbole {
 	/**
 	 * Recherche de manière récursive un identificateur dans la pile.
 	 * Remonte dans la hiérarchie des blocs (tables de hashage).
-	 * Renvoie une erreur si pas d'identificateur trouvé. Retourne le symbole trouvé.
+	 * Renvoie une erreur si pas d'identificateur trouvé. 
 	 * 
 	 * @param ident
-	 * @return Symbole symbole
+     *            L'ident que l'on cherche dans la table de hashage
+	 * @return Le symbole trouvé.
 	 * @throws Exception 
 	 */
 	public Symbole chercher(String ident) throws Exception {
@@ -43,13 +49,13 @@ public class TableDeSymbole {
 	}
 
 	/**
-	 * Recherche dans la table de hashage courante (bloc courant). Retourne une
-	 * erreur si l'identificateur existe. Sinon on crée un symbole et on
-	 * l'ajoute à la table de hashage. Retourne le symbole créé.
-	 * 
+	 * Recherche dans la table de hashage courante (bloc courant). 
+	 * Retourne une erreur si l'identificateur existe. 
+	 * Sinon on crée un symbole et on l'ajoute à la table de hashage.
 	 * 
 	 * @param ident
-	 * @return
+     *            L'ident que l'on cherche dans la table de hashage
+	 * @return Le symbole créé
 	 * @throws Exception
 	 */
 	public Symbole definir(String ident) throws Exception {
@@ -73,7 +79,8 @@ public class TableDeSymbole {
 	}
 
 	/**
-	 * Démarre une nouvelle table de hashage (nouveau bloc). Ajoute à la pile
+	 * Démarre une nouvelle table de hashage (nouveau bloc). 
+	 * Ajoute à la pile
 	 */
 	public void push() {
 		this.pile.push(new HashMap<String, Symbole>());
@@ -88,22 +95,17 @@ public class TableDeSymbole {
 		return;
 	}
 
-	public Stack<HashMap<String, Symbole>> getPile() {
-		return pile;
-	}
-
-	public void setPile(Stack<HashMap<String, Symbole>> pile) {
-		this.pile = pile;
-	}
-
-	@Override
+	/**
+	 * Affiche la tableDeSymbole
+	 */
 	public String toString() {
 		String string = "TableDeSymbole : \n\n";
 		int i = 0;
 		
 		for (HashMap<String, Symbole> bloc : pile) {
 			i++;
-			Set<String> listIdent = bloc.keySet(); // Obtenir la liste des clés
+			// Obtenir de la liste des clés
+			Set<String> listIdent = bloc.keySet(); 
 			Iterator<String> iterateur = listIdent.iterator();
 
 			string += "bloc numero " + i+" (taille : " + bloc.size() + ")\n";
@@ -113,9 +115,7 @@ public class TableDeSymbole {
 				string += "identificateur = " + identificateur + ", symbole = " + bloc.get(identificateur);
 				string += "\n";
 			}
-		}
-		
+		}		
 		return string;
 	}
-
 }

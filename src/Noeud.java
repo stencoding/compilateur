@@ -1,23 +1,57 @@
-
-
 /**
  * Noeud : générer par le FRONTEND (Parser) et utilisé dans le BACKEND (tout ce qui est lié au langage cible) par le Generator.
  * Il compose l'arbre syntaxique et est lui-même composé d'une Catégorie.
+ * 
+ * @author Mathilde PREVOST & Steve NEGRINE
  */
+
 public class Noeud {
 
-	// Catégorie du noeud (= la classe d'un Token)
+	/**
+     * La catégorie du noeud (= classe d'un Token).
+     * 
+     * @see Categorie
+     * 
+     * @see Noeud#getCategorie()
+     */
 	private Categorie categorie;
 	
-	// Valeur du noeud si int (= chargeInt d'un Token)
+	/**
+     * Valeur du noeud si int (= chargeInt d'un Token).
+     * 
+     * @see Noeud#getIntValue()
+     * @see Noeud#setIntValue(int)
+     * 
+     */
 	private int intValue;
 	
-	// Valeur du noeud si str (= chargeStr d'un Token)
+
+	/**
+     * Valeur du noeud si str (= chargeStr d'un Token).
+     * 
+     * @see Noeud#getStrValue()
+     * @see Noeud#setStrValue(String)
+     * 
+     */
 	private String strValue;
 		
-	// Position dans la pile (slot)
+	/**
+     * Position dans la pile (slot).
+     * 
+     * @see Noeud#getPosition()
+     * @see Noeud#setPosition(int)
+     * 
+     */
 	private int position;
-		
+	
+	/**
+     * Constructeur Noeud.
+     * 
+     * @param categorie
+     *            La catégorie du noeud.
+     * 
+     * @see Noeud#categorie
+     */
 	public Noeud(Categorie categorie) {
 		this.categorie = categorie;
 	}
@@ -30,11 +64,7 @@ public class Noeud {
 	 * @throws Exception 
 	 */
 	public static Noeud tokenToNode (Token token) throws Exception {
-		// Pour des raisons de simplicité
-		// on créer ici le noeud à partir du token passé
 		Categorie categorie;
-		int intValue = token.getChargeInt();
-		String strValue = token.getChargeStr();
 		switch (token.getClasse()) {
 			// Opérateurs
 			case TOK_ADD:
@@ -100,6 +130,9 @@ public class Noeud {
 			default:
 				throw new Exception("<" + token.getClasse() + "> inconnu pour construire le noeud");
 		}
+
+		int intValue = token.getChargeInt();
+		String strValue = token.getChargeStr();
 		
 		Noeud node = new Noeud(categorie);
 		node.setStrValue(strValue);
@@ -108,42 +141,80 @@ public class Noeud {
 		return node;
 	}
 	
+	/**
+     * Retourne la catégorie du noeud
+     * 
+     * @return La catégorie du noeud. 
+     */
 	public Categorie getCategorie() {
 		return categorie;
 	}
-
-	public void setCategorie(Categorie categorie) {
-		this.categorie = categorie;
-	}
-
+	
+	/**
+     * Retourne la valeur int du noeud
+     * 
+     * @return La valeur int du noeud. 
+     */
 	public int getIntValue() {
 		return this.intValue;
 	}
-
+	
+	/**
+     * Met à jour la valeur int du noeud.
+     * 
+     * @param intValue
+     *            La valeur int du noeud.
+     * 
+     */
 	public void setIntValue(int intValue) {
 		this.intValue = intValue;
 	}
-
+	
+	/**
+     * Retourne la valeur str du noeud
+     * 
+     * @return La valeur str du noeud. 
+     */
 	public String getStrValue() {
 		return strValue;
 	}
-
+	
+	/**
+     * Met à jour la valeur str du noeud.
+     * 
+     * @param strValue
+     *            La valeur str du noeud.
+     * 
+     */
 	public void setStrValue(String strValue) {
 		this.strValue = strValue;
 	}
 	
+	/**
+     * Retourne la position du noeud dans la pile.
+     * 
+     * @return La position du noeud dans la pile.
+     */
 	public int getPosition() {
 		return position;
 	}
-
+	
+	/**
+     * Met à jour la position du noeud dans la pile.
+     * 
+     * @param strValue
+     *            La position du noeud dans la pile.
+     * 
+     */
 	public void setPosition(int position) {
 		this.position = position;
 	}
 
-	@Override
+	/**
+	 * Affiche le noeud
+	 */
 	public String toString() {
 		return "Noeud [categorie=" + categorie + ", intValue=" + intValue + ", strValue=" + strValue + ", position="
 				+ position + "]";
 	}
-
 }

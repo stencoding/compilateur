@@ -1,12 +1,12 @@
-
-
 /**
  * 
  * Catégorie (BACKEND/FRONTEND)
  * Elle est utilisée par le Noeud.
  * Elle sert notamment lors de la génération du code afin d'identifier chaque Noeud.
  * 
+ * @author Mathilde PREVOST & Steve NEGRINE
  */
+
 public enum Categorie {
 	// Opérateurs
 	ADD,
@@ -36,11 +36,10 @@ public enum Categorie {
 	FUNCTION,
 	ARGS,
 	ECHO,
-	RETURN,
-	// Type de variables
+	// Types de variables
 	INT,
 	STR,
-	// stocke une constante
+	// Stockage constante
 	CST_INT,
 	CST_STR,
 	IDENT,

@@ -1,5 +1,3 @@
-
-
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -8,22 +6,33 @@ import java.io.IOException;
  * 
  * Generator (BACKEND : tout ce qui est lié au langage cible).
  * Il analyse l'arbre syntaxique et génère le langage cible.
- *
+ * 
+ * @author Mathilde PREVOST & Steve NEGRINE
  */
 public class Generator {
-
+	
+	/**
+     * Le parser du Generator
+     * 
+     * @see Parser
+     */	
 	private Parser parser;
+	
+	/**
+     * Le fichier généré par le Generator
+     * 
+     */	
 	private BufferedWriter fichier;
 			
 	/**
-	 * On récupère l'analyseur syntaxique
+	 * Constructeur Generator.
 	 * 
 	 * @param parser
+     *            Le parser (l'analyseur syntaxique) du Generator.
 	 * @throws Exception
 	 */
 	public Generator(Parser parser) throws Exception {
 		this.parser = parser;
-
 		try {
 			this.fichier = new BufferedWriter(new FileWriter("./files/out/code_generated.txt"));
 
@@ -36,9 +45,16 @@ public class Generator {
 		}
 	}
 	
+	/**
+	 * Génère le code.
+	 * Fonction récursive
+	 * 
+	 * @param arbre
+     *            L'arbre à générer.
+	 * @throws IOException
+	 */
 	public void generateCode(Arbre arbre) throws IOException {
-		switch (arbre.getNoeud().getCategorie()) {
-		
+		switch (arbre.getNoeud().getCategorie()) {		
 			case RACINE:
 				int nbEnfants = arbre.getEnfants().size();
 				this.fichier.write(".start");
@@ -217,6 +233,16 @@ public class Generator {
 		}
 	}
 	
+	/**
+	 * Génère le code pour les arbres des opérateurs de comparaisons.
+	 * Fonction récursive
+	 * 
+	 * @param arbre
+     *            L'arbre à générer.
+	 * @param instruction
+     *            L'instruction à écrire dans le fichier.
+	 * @throws IOException
+	 */
 	public void generateCodeForTwoChildren(Arbre arbre, String instruction) throws IOException{
 		if(arbre.getEnfants().get(0).getNoeud().getCategorie() != Categorie.IDENT) {
 			generateCode(arbre.getEnfants().get(0));
@@ -230,34 +256,87 @@ public class Generator {
 		}
 		
 	}
-			
+	
+	/**
+	 * Ecrit dans le fichier l'instruction
+	 * 
+	 * @param instruction
+     *            L'instruction à écrire dans le fichier
+	 * @throws IOException
+	 */
 	public void writeLine(String instruction) throws IOException {
 		writeLine(instruction, "");
 	}
 
+	/**
+	 * Ecrit dans le fichier l'instruction et sa valeur
+	 * 
+	 * @param instruction
+     *            L'instruction à écrire dans le fichier
+	 * @param value
+     *            La valeur de l'instruction à écrire dans le fichier
+	 * @throws IOException
+	 */
 	public void writeLine(String instruction, int value) throws IOException {
 		this.fichier.newLine();
 		this.fichier.write("\t" + instruction + " " + value);
 	}
 	
+	/**
+	 * Ecrit dans le fichier l'instruction et sa valeur
+	 * 
+	 * @param instruction
+     *            L'instruction à écrire dans le fichier
+	 * @param value
+     *            La valeur de l'instruction à écrire dans le fichier
+	 * @throws IOException
+	 */
 	public void writeLine(String instruction, String value) throws IOException {
 		this.fichier.newLine();
 		this.fichier.write("\t" + instruction + " " + value);
 	}
 	
+	/**
+	 * Ecrit dans le fichier l'instruction, sa valeur et un commentaire
+	 * 
+	 * @param instruction
+     *            L'instruction à écrire dans le fichier
+	 * @param value
+     *            La valeur de l'instruction à écrire dans le fichier
+	 * @param commentaire
+     *            Le commentaire de l'instruction à écrire dans le fichier
+	 * @throws IOException
+	 */
 	public void writeLine(String instruction, String value, String commentaire) throws IOException {
 		this.fichier.newLine();
 		this.fichier.write("\t" + instruction + " " + value + " ; " + commentaire);
 	}
 
+	/**
+	 * Ecrit dans le fichier l'instruction, sa valeur et un commentaire
+	 * 
+	 * @param instruction
+     *            L'instruction à écrire dans le fichier
+	 * @param value
+     *            La valeur de l'instruction à écrire dans le fichier
+	 * @param commentaire
+     *            Le commentaire de l'instruction à écrire dans le fichier
+	 * @throws IOException
+	 */
 	public void writeLine(String instruction, int value, String commentaire) throws IOException {
 		this.fichier.newLine();
 		this.fichier.write("\t" + instruction + " " + value + " ; " + commentaire);
 	}
-	
+
+	/**
+	 * Ecrit dans le fichier le label de la fonction, sans indentation
+	 * 
+	 * @param label
+     *            Le label de la fonction
+	 * @throws IOException
+	 */
 	public void writeLineWithoutTab(String label) throws IOException {
 		this.fichier.newLine();
 		this.fichier.write(label);
 	}
-
 }

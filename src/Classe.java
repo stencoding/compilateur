@@ -1,10 +1,9 @@
-
-
 /**
  * 
  * Classe (FRONTEND).
  * Elle compose le Token. Elle permet de l'identifier.
  *
+ * @author Mathilde PREVOST & Steve NEGRINE
  */
 public enum Classe {
 	// Opérateurs
@@ -39,10 +38,10 @@ public enum Classe {
 	TOK_BREAK,
 	TOK_RETURN,
 	TOK_ECHO,
-	// Type de variable
+	// Types de variable
 	TOK_INT,
 	TOK_STR,
-	// stocke une constante
+	// Stockage constante
 	TOK_CST_INT,
 	TOK_CST_STR,
 	TOK_IDENT,
