@@ -4,6 +4,7 @@ int main() {
 	x = 5;
 	z = sommeNbPremier(x);
 	echo z;
+	
 	var a : int;
 	var b : int;
 	var y : int;
@@ -11,8 +12,22 @@ int main() {
 	b = 6;
 	y = somme(a, b);
 	echo y;
+	
+	var h : int;
+	var c : int;
+	var d : int;
+	c = 20;
+	d = 5;
+	h = divisionEntiere(c, d);
+	echo h;
+	
+	var j : int;
+	var g : int;
+	g = 10;
+	j = nombresPairs(g);
 	return y;
 }
+
 int sommeNbPremier(x) {
 	var i : int;
 	var res : int;
@@ -21,6 +36,26 @@ int sommeNbPremier(x) {
 	}
 	return res;
 }
+
 int somme(a, b) {
 	return a + b;
+}
+
+int divisionEntiere(c, d) {
+	var resultat : int;
+	while(c > 0) {
+		c = c - d;
+		resultat = resultat + 1; 
+	}	
+	return resultat;
+}
+
+int nombresPairs(e) {
+	var i : int;
+	for(i = 0 ; i <= e ; i = i + 1) {
+		if(i % 2 == 0) {
+			echo i;
+		}
+	}
+	return e;
 }

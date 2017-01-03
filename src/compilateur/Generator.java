@@ -14,7 +14,7 @@ public class Generator {
 
 	private Parser parser;
 	private BufferedWriter fichier;
-
+			
 	/**
 	 * On récupère l'analyseur syntaxique
 	 * 
@@ -108,28 +108,29 @@ public class Generator {
 				break;
 
 			case IF:
-				writeLineWithoutTab(".if_" + arbre.getEnfants().get(0).getNoeud().getIntValue());
+				int cpt_nlabel = arbre.getNoeud().getIntValue();
+				writeLineWithoutTab(".if_" + cpt_nlabel);
 				
 				// on génère la condition
 				generateCode(arbre.getEnfants().get(0));
-				writeLine("jumpt", "in_if_" + arbre.getEnfants().get(0).getNoeud().getIntValue());
+				writeLine("jumpt", "in_if_" + cpt_nlabel);
 								
 				if(arbre.getEnfants().size() > 2 && !arbre.getEnfants().get(2).getNoeud().getCategorie().equals(Categorie.BREAK)) {
 					generateCode(arbre.getEnfants().get(2));
 				}
-				writeLine("jump", "end_if_" + arbre.getEnfants().get(0).getNoeud().getIntValue());
+				writeLine("jump", "end_if_" + cpt_nlabel);
 				
 				// génère le code si on entre dans le if
-				writeLineWithoutTab(".in_if_" + arbre.getEnfants().get(0).getNoeud().getIntValue());
+				writeLineWithoutTab(".in_if_" + cpt_nlabel);
 				generateCode(arbre.getEnfants().get(1));
 				
 				// on boucle (sale, au plus vite sans trop réfléchir...)
 				if(arbre.getEnfants().size() > 2 && arbre.getEnfants().get(2).getNoeud().getCategorie().equals(Categorie.BREAK)) {
-					writeLine("jump", "if_" + arbre.getEnfants().get(0).getNoeud().getIntValue());
+					writeLine("jump", "if_" + cpt_nlabel);
 				}
 				
 				// label de fin
-				writeLineWithoutTab(".end_if_" + arbre.getEnfants().get(0).getNoeud().getIntValue());
+				writeLineWithoutTab(".end_if_" + cpt_nlabel);
 				break;
 			
 			case COMPARE:

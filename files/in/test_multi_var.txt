@@ -3,5 +3,6 @@ int main() {
 	var y : int;
 	x=7;
 	y=8+x;
-	return x + y;
+	echo y;
+	return 0;
 }

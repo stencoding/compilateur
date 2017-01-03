@@ -1,3 +1,10 @@
-int main() {
-	return 3+5-2+2;
+int main() {	
+	var x : int;
+	var z : int;
+	x = 3;
+	z = 5;
+	var y : int;
+	y = x + z;
+	echo y;
+	return 0;
 }

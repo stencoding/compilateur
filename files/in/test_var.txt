@@ -1,5 +1,6 @@
 int main() {
 	var x : int;
 	x=7;
-	return x;
+	echo x;
+	return 0;
 }

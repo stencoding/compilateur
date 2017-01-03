@@ -241,7 +241,7 @@ public class Lexer {
 	 * @return boolean
 	 */
 	private boolean estSautDeLigne(String caractere) {
-		if (caractere.equals("\n")) {
+		if (caractere.equals("\n") || caractere.equals("\r\n")) {
 			return true;
 		}
 		return false;

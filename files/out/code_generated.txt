@@ -1,0 +1,22 @@
+.start
+	; declaration variable 
+	push.i 0
+	push.i 0
+	set 0 ; i
+.if_0
+	get 0 ; i
+	push.i 5
+	cmplt.i 
+	jumpt in_if_0
+	jump end_if_0
+.in_if_0
+	get 0 ; affichage de i
+	out.i ; affichage de i
+	get 0 ; i
+	push.i 1
+	add.i 
+	set 0 ; i
+	jump if_0
+.end_if_0
+	push.i 0
+	halt 

@@ -7,5 +7,5 @@ int main() {
 		x=8;
 	}
 	echo x;
-	return x;
+	return 0;
 }

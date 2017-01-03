@@ -34,6 +34,7 @@ public class Parser {
 	 */
 	public Parser(Lexer lexer) throws Exception {
 		this.lexer = lexer;
+		this.nlabel = 0;
 		this.returnOk = false;
 	}
 
@@ -254,6 +255,8 @@ public class Parser {
 			// ------------------ Profondeur = 3 -----------------//
 			ArrayList<Arbre> enfantsDepthThree = new ArrayList<Arbre>();
 			Noeud nodeIf = new Noeud(Categorie.IF);
+			nodeIf.setIntValue(this.nlabel);
+			this.nlabel++;
 			Noeud nodeBreak = new Noeud(Categorie.BREAK);
 
 			enfantsDepthThree.add(exp1);
@@ -301,6 +304,8 @@ public class Parser {
 			// ------------------ Profondeur = 2 -----------------//
 			ArrayList<Arbre> enfantsDepthTwo = new ArrayList<Arbre>();
 			Noeud nodeIf = new Noeud(Categorie.IF);
+			nodeIf.setIntValue(this.nlabel);
+			this.nlabel++;
 			Noeud nodeBreak = new Noeud(Categorie.BREAK);
 
 			// Statement (block)
@@ -373,7 +378,7 @@ public class Parser {
 	 * @throws Exception
 	 */
 	public Arbre primaire() throws Exception {
-		
+		// ident (E*) | ident
 		if (lexer.look().getClasse() == Classe.TOK_IDENT) {
 			Token tok = lexer.next(); // sur ident
 			Noeud op = Noeud.tokenToNode(tok);
@@ -413,15 +418,14 @@ public class Parser {
 			
 			return new Arbre(op, null);
 		}
-
+		// cst_int
 		if (lexer.look().getClasse() == Classe.TOK_CST_INT) {
 			Token tok = lexer.next(); // sur cst_int
 			Noeud op = Noeud.tokenToNode(tok);
 			return new Arbre(op, null);
 		}
 
-		// Opposé : arbre comme pour la soustraction
-		// mais avec un seul enfant
+		// -P
 		if (lexer.look().getClasse() == Classe.TOK_SUB) {
 			Token tok = lexer.next(); // sur sub
 			Noeud op = Noeud.tokenToNode(tok);
@@ -440,7 +444,7 @@ public class Parser {
 		if (lexer.look().getClasse() != Classe.TOK_PAR_OUVR) {
 			return null;
 		}
-
+		// (E)
 		if (lexer.look().getClasse() == Classe.TOK_PAR_OUVR) {
 			lexer.next(); // lexer sur la parenthèse ouvrante
 			Arbre res = expression();
@@ -562,7 +566,7 @@ public class Parser {
 	 */
 	public Arbre affectation() throws Exception {
 
-		// Ident = E;
+		// ident = E;
 		if (lexer.look().getClasse() == Classe.TOK_IDENT) {
 
 			ArrayList<Arbre> enfants = new ArrayList<Arbre>();
@@ -622,7 +626,6 @@ public class Parser {
 		
 		this.nvar = 0;
 		this.narg = 0;
-		this.nlabel = 0;
 
 		this.tableSymbole = new TableDeSymbole();
 		
