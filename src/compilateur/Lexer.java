@@ -72,18 +72,13 @@ public class Lexer {
 			return token;
 		}
 		
-		while (estEspace(data[this.pos])) {
+		while (estEspace(data[this.pos])
+			|| estSautDeLigne(data[this.pos])
+			|| estIndentation(data[this.pos])
+		) {
 			this.pos++;
 		}
-		
-		while (estSautDeLigne(data[this.pos])) {
-			this.pos++;
-		}
-		
-		while (estIndentation(data[this.pos])) {
-			this.pos++;
-		}
-		
+				
 		if (estChiffre(data[this.pos])) {
 			int intTmp = lireInt();
 			token.setChargeInt(intTmp);
