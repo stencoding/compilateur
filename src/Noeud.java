@@ -202,7 +202,7 @@ public class Noeud {
 	/**
      * Met à jour la position du noeud dans la pile.
      * 
-     * @param strValue
+     * @param position
      *            La position du noeud dans la pile.
      * 
      */
