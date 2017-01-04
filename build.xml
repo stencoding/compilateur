@@ -6,8 +6,7 @@
 				includeantruntime="false" />
 	</target>
 	<target name = "clean">
-		<delete dir = "bin"/>
-		<delete dir = "javaDoc"/>	
+		<delete dir = "bin"/>	
 		<delete dir = "exe"/>			
 	</target>
 	<target name = "doc">
